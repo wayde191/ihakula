@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<plugin>
+	<info id="ih.plugins.gantt" parentId="ih.plugins.products" lazyLoad="true"></info>
+  
+  <resource>
+    <script path='./js/Plugins/gantt/ganttPlugin.js'></script>
+    <script path='./js/Plugins/gantt/GanttDataModel.js'></script>
+    <script path='./js/Plugins/gantt/GanttViewController.js'></script>
+	</resource>
+	
+	<extension-point>
+	</extension-point>
+</plugin>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<plugin>
+	<info id="ih.plugins.home" parentId="ih.plugins.root" lazyLoad="false"></info>
+  
+  <resource>
+    <script path='./js/Plugins/home/homePlugin.js'></script>
+	</resource>
+	
+	<extension-point>
+
+	</extension-point>
+</plugin>

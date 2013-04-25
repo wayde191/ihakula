@@ -1,0 +1,49 @@
+<div id="ih-login" class="ih-dialog">
+    <header class="hero">
+        <hgroup>
+            <h3>Sign in</h3>
+            <p class="intro">Use the iHakula ID you used to register or register now.</p>
+        </hgroup>
+    </header>
+    <div class="dialog-cell">
+        <font size="2"><label for="accountname"><span class="dslabel">iHakula ID:</span></label></font>
+        <input size="30" autocapitalize="off" autocorrect="off" maxlength="128" id="accountname" type="text" value="" name="theAccountName"/>
+    </div>
+    <div class="dialog-cell">
+        <font size="2"><label for="accountpassword"><span class="dslabel">Password:</span></label></font>
+        <input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" autocorrect="off" maxlength="32" id="accountpassword" type="password" name="theAccountPW"/>
+    </div>
+    
+    <div style="height:33px;">
+        <a class="button large register-button"><span>Register</span></a>
+        <a class="button large blue signin-button"><span>Sign In</span></a>
+    </div>
+    <div class="divider"></div>
+    <a class="forgot-button">Forgot ID or Password?</a>
+    
+</div>
+
+// JS string
+'<div id="ih-login" class="ih-dialog">' +
+            '<header class="hero">' +
+              '<hgroup>' +
+                '<h3>Sign in</h3>' +
+                '<p class="intro">Use the iHakula ID you used to register or register now.</p>' +
+              '</hgroup>' +
+            '</header>' +
+            '<div class="dialog-cell">' +
+              '<font size="2"><label for="accountname"><span class="dslabel">iHakula ID:</span></label></font>' +
+              '<input size="30" autocapitalize="off" autocorrect="off" maxlength="128" id="accountname" type="text" value="" name="theAccountName"/>' +
+            '</div>' +
+            '<div class="dialog-cell">' +
+              '<font size="2"><label for="accountpassword"><span class="dslabel">Password:</span></label></font>' +
+              '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" autocorrect="off" maxlength="32" id="accountpassword" type="password" name="theAccountPW"/>' +
+            '</div>' +
+            '<div style="height:33px;">' +
+              '<a id="ih-register" class="button large register-button"><span>Register</span></a>' +
+              '<a id="ih-login" class="button large blue signin-button"><span>Sign In</span></a>' +
+            '</div>' +
+            '<div class="divider"></div>' +
+            '<a id="ih-forgetPwd" class="forgot-button">Forgot ID or Password?</a>' +
+      
+          '</div>';

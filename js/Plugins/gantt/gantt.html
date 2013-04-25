@@ -1,0 +1,71 @@
+<div style="clear:both">
+  <h2>Gantt</h2>
+  <span>Project Name</span>
+  
+  <a id="ih-login-button" class="button-fillet" style="text-decoration: none;float:right; margin-left:8px;">Draw Gantt</a>
+  <a id="ih-login-button" class="button-fillet" style="text-decoration: none;float:right; margin-left:8px;">New Project</a>
+  <select style="float:right;"><option>good game</option></select>
+  
+ 
+  <div id="example" style="margin-top:12px;"></div>
+</div>
+
+  <style class="common">
+    .handsontable .currentRow {
+      background-color: #E7E8EF;
+    }
+    .handsontable .currentCol {
+      background-color: #F9F9FB;
+    }
+  </style>
+
+    <script>
+      $(document).ready(function () {
+        var data = [
+        {car: "Nissan", year: 2009, chassis: "black", bumper: "black"},
+        {car: "Nissan", year: 2006, chassis: "blue", bumper: "blue"},
+        {car: "Chrysler", year: 2004, chassis: "yellow", bumper: "black"},
+        {car: "Volvo", year: 2012, chassis: "white", bumper: "gray"}
+      ];
+
+        $('#example').handsontable({
+          data: data,
+          colWidths: [55, 180, 180, 80, 80, 80],
+          currentRowClassName: 'currentRow',
+          currentColClassName: 'currentCol',
+          onChange: function () {
+            console.log(arguments);
+          },
+          colHeaders: ["Car", "Year", "Chassis color", "Bumper color"],
+    columns: [
+      {
+        data: "car",
+        readOnly: true
+      },
+      {
+        data: "year"
+      },
+      {
+        data: "chassis"
+      },
+      {
+        data: "bumper"
+      }
+    ],
+          
+          rowHeaders: true,
+          RemoveRow: true,
+          minSpareRows: 1,
+          wayde:"haha"
+        });
+        $("#example").handsontable('selectCell', 3, 3);
+        
+        window.f = function(para){
+          console.log(para + " delete");
+        };
+        
+        window.ihSysEngine.pubsub.subscribe("exampleSubject", window, f);
+
+
+      });
+    </script>
