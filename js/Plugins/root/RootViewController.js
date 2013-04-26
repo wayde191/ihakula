@@ -48,14 +48,25 @@
       $("#content-col-3-link").click(ih.$F(function(){
         this.showMessage({title:"温馨提示", text:"Coming soon"});
       }).bind(this));
+      
+      $("#gn-products").click(ih.$F(function(){
+        this.showMessage({title:"温馨提示", text:"Coming soon"});
+      }).bind(this));
+      $("#gn-us").click(ih.$F(function(){
+        this.showMessage({title:"温馨提示", text:"Coming soon"});
+      }).bind(this));
+      $("#gn-blog").click(ih.$F(function(){
+        this.showMessage({title:"温馨提示", text:"Coming soon"});
+      }).bind(this));
+                 
       $("#mf-ihakula").click(ih.$F(function(){
         window.open(ih.hostRoot + "htmls/ihakula.html");
       }).bind(this));
       $("#mf-aboutme").click(ih.$F(function(){
-        this.showMessage({title:"温馨提示", text:"Coming soon"});
+        window.open(ih.hostRoot + "htmls/aboutme.html");
       }).bind(this));
       $("#mf-privacy").click(ih.$F(function(){
-        this.showMessage({title:"温馨提示", text:"Coming soon"});
+        window.open(ih.hostRoot + "htmls/termsandprivacy.html");
       }).bind(this));
       
     };
@@ -223,9 +234,10 @@
 			var el = document.getElementById('ih-recommands');
 			el.parentNode.replaceChild(replacement, el);
       
+      var me = this;
 			coverflow('ih-recommands').setup({
         width: '100%',
-        item: 1,
+        item: 0,
         playlist: [
           {
           "title": "Gantts Everything",
@@ -255,16 +267,19 @@
           spinner.stop();
           
           this.on('focus', function(index) {
-            console.log(index);
           });
 				
           this.on('click', function(index, link) {
-            var ganttPlugin = ihSysEngine.root.findChildPluginById("ih.plugins.gantt");
-            if(!ganttPlugin.scriptsLoaded) {
-              ih.plugins.rootPlugin.showMaskSpinner();
-              ganttPlugin.loadScripts();
+            if(index == 1) {
+              me.showMessage({title:"温馨提示", text:"Coming soon"});
             } else {
-              ganttPlugin.pluginAnchor.scriptsLoaded();
+              var ganttPlugin = ihSysEngine.root.findChildPluginById("ih.plugins.gantt");
+              if(!ganttPlugin.scriptsLoaded) {
+                ih.plugins.rootPlugin.showMaskSpinner();
+                ganttPlugin.loadScripts();
+              } else {
+                ganttPlugin.pluginAnchor.scriptsLoaded();
+              }
             }
           });
         

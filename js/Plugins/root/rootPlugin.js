@@ -12,8 +12,10 @@
   ih.defineClass("ih.plugins.rootPlugin", null, null, function(PLUGIN, plugin){
   
     plugin.prototype.init = function(){
-      ih.rootUrl = "http://localhost/AppStore/iHakula/api/index.php/";
-      ih.hostRoot = "http://localhost/AppStore/iHakula/";
+      ih.rootUrl = "http://localhost/ihakula/api/index.php/";
+      ih.hostRoot = "http://localhost/ihakula/";
+//      ih.rootUrl = "http://www.ihakula.com/api/index.php/";
+//      ih.hostRoot = "http://www.ihakula.com/";
       this.setupSysConfigurations();
     };
     
