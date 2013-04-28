@@ -242,14 +242,14 @@
           {
           "title": "Gantts Everything",
           "description": "Don't just make a plan, just do it!",
-          "image": "http://localhost/AppStore/iHakula/images/product-gantt.png",
+          "image": "http://www.ihakula.com/images/product-gantt.png",
           "link": "http://www.ihakula.com/",
           "duration": "183"
           },
           {
           "title": "Life Assistant",
           "description": "Account your life, it is a good life!",
-          "image": "http://localhost/AppStore/iHakula/images/product-iaccount.png",
+          "image": "http://www.ihakula.com/images/product-iaccount.png",
           "duration": "782"
           }
           ],
