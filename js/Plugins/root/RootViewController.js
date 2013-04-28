@@ -56,7 +56,7 @@
         this.showMessage({title:"温馨提示", text:"Coming soon"});
       }).bind(this));
       $("#gn-blog").click(ih.$F(function(){
-        this.showMessage({title:"温馨提示", text:"Coming soon"});
+        window.open("http://blog.ihakula.com");
       }).bind(this));
                  
       $("#mf-ihakula").click(ih.$F(function(){
