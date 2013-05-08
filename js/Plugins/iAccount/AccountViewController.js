@@ -16,7 +16,7 @@
       this.dm.delegate = this;
       this.doSubscribes();
       this.loadContent();
-//      this.setupEvents();
+      this.setupEvents();
 //      this.loadProjects();
     };
     
@@ -78,38 +78,14 @@
     };
     
     account.prototype.setupEvents = function(){
-      
-      $("#ih-new-project-button").click(ih.$F(function(){
-        $("#ih-gantt-content").html(this.projectHtml);
-        $("#ih-create-project-button").click(ih.$F(function(){
-          var projectName = $("#newprojectname")[0].value;
-          if(projectName) {
-            var paras = {
-              "name":projectName,
-              "userID":ih.plugins.rootViewController.dm.sysUser.id
-            };
-            ih.plugins.rootPlugin.showMaskSpinner();
-            this.dm.newProject(paras);
-          }
-        }).bind(this));
+      var sc = new ih.Scroll("scrollWrapper");
+      $("#scrollLeftButton").click(ih.$F(function(){
+        sc.toElement("scrollRight", 750);
       }).bind(this));
       
-      $("#ih-draw-gantt-button").click(ih.$F(function(){
-        $("#ih-gantt-content").html(this.ganttHtml);
-        this.ganttTable = new ih.Gantt(document.all.GanttChart);
-        for(var i = 0; i < this.dm.tasks.length; i++){
-          var task = this.dm.tasks[i];
-          this.ganttTable.addTaskDetail(new this.ganttTable.task(task.beginDate, task.endDate, task.text, task.principal, task.schedule));
-        }
-        this.ganttTable.draw();
+      $("#scrollRightButton").click(ih.$F(function(){
+        sc.toElement("scrollLeft", 750);
       }).bind(this));
-      
-      var me = this;
-      $("#ih-project-select").change(function(){
-        var indexId = $("#ih-project-select").find("option:selected").attr("index_id");
-        me.dm.selectedProject = me.dm.projects[indexId];
-        me.onProjectSelected();
-      });
     };
     
     account.prototype.onTableValueChanged = function(selectedValue){
@@ -175,7 +151,23 @@
            '<td id="ih-view" class="BQ">'+
             '<div class="IJ">'+
               '<div class="mw">'+
-                '<div id="ID-reportContainer" class="Ti"></div>'+
+                '<div id="ID-reportContainer" class="Ti">'+
+                '<style>'+
+                  '#scrollLeft{left:0px;}'+
+                  '#scrollRight{left:678px;}'+
+                  '#scrollContent{left:628px}'+
+                  '.scrollButton{position:absolute;font-size:40px;box-sizing: border-box;-webkit-box-align: center;text-align: center;cursor: default;color: rgba(0,0,0, 0.5);border: none;background:transparent;z-index:10;}'+
+                  '.scrollButton:hover{background-color:#999;color:#fff;}'+
+                '</style>'+
+                '<div id="scrollWrapper" style="width:678px;height:300px;position:relative;overflow:hidden">'+
+                  '<div id="scrollContent" style="position:absolute;width:100px;height:40px;">'+
+                    '<button id="scrollLeftButton" class="scrollButton" style="left:0px;"><</button>'+
+                    '<button id="scrollRightButton" class="scrollButton" style="left:60px;">></button>'+
+                  '</div>'+
+                  '<div id="scrollLeft" style="position:absolute;top:0px;width:678px;height:300px;"></div>'+
+                  '<div id="scrollRight" style="position:absolute;top:0px;width:678px;height:300px;"></div>'+
+                '</div>'+
+                '</div>'+
               '</div>'+
             '</div>'+
            '</td>'+
