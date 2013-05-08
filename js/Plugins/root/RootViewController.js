@@ -271,7 +271,13 @@
 				
           this.on('click', function(index, link) {
             if(index == 1) {
-              me.showMessage({title:"温馨提示", text:"Coming soon"});
+              var accountPlugin = ihSysEngine.root.findChildPluginById("ih.plugins.account");
+              if(!accountPlugin.scriptsLoaded) {
+                ih.plugins.rootPlugin.showMaskSpinner();
+                accountPlugin.loadScripts();
+              } else {
+                accountPlugin.pluginAnchor.scriptsLoaded();
+              }
             } else {
               var ganttPlugin = ihSysEngine.root.findChildPluginById("ih.plugins.gantt");
               if(!ganttPlugin.scriptsLoaded) {

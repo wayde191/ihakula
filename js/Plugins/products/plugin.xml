@@ -8,5 +8,6 @@
 	
 	<extension-point>
     <child>./js/Plugins/gantt/</child>
+    <child>./js/Plugins/iAccount/</child>
 	</extension-point>
 </plugin>

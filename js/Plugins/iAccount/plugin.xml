@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<plugin>
+	<info id="ih.plugins.account" parentId="ih.plugins.products" lazyLoad="true"></info>
+    
+    <resource>
+        <script path='./js/Plugins/iAccount/accountPlugin.js'></script>
+        <script path='./js/Plugins/iAccount/AccountDataModel.js'></script>
+        <script path='./js/Plugins/iAccount/AccountViewController.js'></script>
+	</resource>
+	
+	<extension-point>
+	</extension-point>
+</plugin>
