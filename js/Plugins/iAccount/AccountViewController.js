@@ -77,7 +77,44 @@
       window.setTimeout(ih.$F(ih.plugins.rootViewController.onLoginBtnClicked).bind(ih.plugins.rootViewController), 2000);
     };
     
+    account.prototype.restorePanelClass = function(){
+      $("#ih-tally").removeClass().addClass("P");
+      $("#ih-statistics").removeClass().addClass("P");
+      $("#ih-analyse").removeClass().addClass("P");
+      $("#ih-manager").removeClass().addClass("P");
+    };
+    
     account.prototype.setupEvents = function(){
+      var me = this;
+      $("#ih-tally").click(ih.$F(function(){
+        me.restorePanelClass();
+        $("#ih-tally").removeClass().addClass("P selecting");
+        me.onTallyClicked();
+      }).bind(this));
+      
+      $("#ih-statistics").click(ih.$F(function(){
+        me.restorePanelClass();
+        $("#ih-statistics").removeClass().addClass("P selecting");
+        me.onStatisticsClicked();
+      }).bind(this));
+      
+      $("#ih-analyse").click(ih.$F(function(){
+        me.restorePanelClass();
+        $("#ih-analyse").removeClass().addClass("P selecting");
+        me.onAnalyseClicked();
+      }).bind(this));
+      
+      $("#ih-manager").click(ih.$F(function(){
+        me.restorePanelClass();
+        $("#ih-manager").removeClass().addClass("P selecting");
+        me.onManagerClicked();
+      }).bind(this));
+      
+      this.onTallyClicked();
+    };
+    
+    account.prototype.onTallyClicked = function(){
+      $("#ih-reportContainer").html(this.tallyHtml);
       var sc = new ih.Scroll("scrollWrapper");
       $("#scrollLeftButton").click(ih.$F(function(){
         sc.toElement("scrollRight", 750);
@@ -86,51 +123,19 @@
       $("#scrollRightButton").click(ih.$F(function(){
         sc.toElement("scrollLeft", 750);
       }).bind(this));
+      
     };
     
-    account.prototype.onTableValueChanged = function(selectedValue){
-      if(selectedValue[2] && selectedValue[2] != selectedValue[3]) {
-        // index 3 is new data
-        var refreshedData = this.dm.tasks[selectedValue[0]];
-        var columnName = selectedValue[1];
-        var tableName = this.columnAdapter[columnName];
-        refreshedData[tableName] = selectedValue[3];
-        ih.plugins.rootPlugin.showMaskSpinner();
-        this.dm.doUpdateTask(refreshedData);
-        
-      } else if(!selectedValue[2]){
-        var row = selectedValue[0];
-        var name = $('#ih-gantt-table').handsontable('getDataAtCell', row, 0);
-        var beginDate = $('#ih-gantt-table').handsontable('getDataAtCell', row, 1);
-        var endDate = $('#ih-gantt-table').handsontable('getDataAtCell', row, 2);
-        var principal = $('#ih-gantt-table').handsontable('getDataAtCell', row, 3);
-        var schedule = $('#ih-gantt-table').handsontable('getDataAtCell', row, 4);
-        
-        if(name && beginDate && endDate && principal && schedule) {
-          var newRow = {
-            "name":name,
-            "beginDate":beginDate,
-            "endDate":endDate,
-            "principal":principal,
-            "schedule":schedule,
-            "projectID":this.dm.selectedProject.id
-          };
-          ih.plugins.rootPlugin.showMaskSpinner();
-          this.dm.insert(newRow);
-        }
-      }
+    account.prototype.onStatisticsClicked = function(){
+      $("#ih-reportContainer").html("");
     };
     
-    account.prototype.onDeleteBtnClicked = function(row){
-      var refreshedData = this.dm.tasks[row];
-      if(refreshedData) {
-        var paras = {
-          "id":refreshedData.id,
-          "projectID":this.dm.selectedProject.id
-        };
-        ih.plugins.rootPlugin.showMaskSpinner();
-        this.dm.deleteTask(paras);
-      }
+    account.prototype.onAnalyseClicked = function(){
+      $("#ih-reportContainer").html("");
+    };
+    
+    account.prototype.onManagerClicked = function(){
+      $("#ih-reportContainer").html("");
     };
     
     account.prototype.loadContent = function(){
@@ -151,8 +156,19 @@
            '<td id="ih-view" class="BQ">'+
             '<div class="IJ">'+
               '<div class="mw">'+
-                '<div id="ID-reportContainer" class="Ti">'+
-                '<style>'+
+                '<div id="ih-reportContainer" class="Ti">'+
+                '</div>'+
+              '</div>'+
+            '</div>'+
+           '</td>'+
+           '</tr>'+
+        '</tbody>'+
+        '</table>'+
+        '</div></div>';
+        
+      $("#content").html(this.accountHtml);
+        
+      this.tallyHtml = '<style>'+
                   '#scrollLeft{left:0px;}'+
                   '#scrollRight{left:678px;}'+
                   '#scrollContent{left:628px}'+
@@ -164,18 +180,20 @@
                     '<button id="scrollLeftButton" class="scrollButton" style="left:0px;"><</button>'+
                     '<button id="scrollRightButton" class="scrollButton" style="left:60px;">></button>'+
                   '</div>'+
-                  '<div id="scrollLeft" style="position:absolute;top:0px;width:678px;height:300px;"></div>'+
+                  '<div id="scrollLeft" style="position:absolute;top:0px;width:678px;height:300px;">'+
+                     '<div style="padding:12px 10px 10px 10px;"><h4>记一笔</h4>' +
+                     '<font size="2"><label><span class="dslabel">金额:</span></label></font>' +
+                     '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="accountMoney" name="accountMoney"/>' +
+                     '<select id="ih-field-detail" style="float:right;"><option>工资收入</option></select>'+
+                     '<select id="ih-field-select" style="float:right;"><option>职业收入</option></select>'+
+                    '<div style="padding-top:8px;"><font size="2"><label><span class="dslabel">描述:</span></label></font>' +
+                    '<textarea id="accountDescription" row="10" cols="50" style="height:100px;"></textarea>'+
+                    '<div><a id="ih-add-record-button" class="button-fillet" style="text-decoration: none;float:right; margin-left:8px;">确定</a></div>'+
+                    '</div></div>' +
+                  '</div>'+
                   '<div id="scrollRight" style="position:absolute;top:0px;width:678px;height:300px;"></div>'+
-                '</div>'+
-                '</div>'+
-              '</div>'+
-            '</div>'+
-           '</td>'+
-           '</tr>'+
-        '</tbody>'+
-        '</table>'+
-        '</div></div>';
-      $("#content").html(this.accountHtml);
+                '</div>';
+      
     };
     
     
