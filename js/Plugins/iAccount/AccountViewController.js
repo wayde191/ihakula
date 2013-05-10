@@ -17,60 +17,63 @@
       this.doSubscribes();
       this.loadContent();
       this.setupEvents();
-//      this.loadProjects();
+      this.loadFields();
     };
     
     account.prototype.doSubscribes = function(){
-      ih.plugins.rootViewController.dm.pubsub.subscribe("loginSucceed", this, this.loadProjects);
+      ih.plugins.rootViewController.dm.pubsub.subscribe("loginSucceed", this, this.loadFields);
     };
     
-    account.prototype.loadProjects = function(){
+    account.prototype.loadFields = function(){
       if(ih.plugins.rootViewController.dm.sysUser.isLogin()){
-        this.dm.doLoadProjects({"ihakulaID":ih.plugins.rootViewController.dm.sysUser.id});
+        this.dm.doLoadFields();
       } else {
         this.showLoginDialog();
       }
     };
     
-    account.prototype.updateProjectOptions = function(){
+    account.prototype.updateFieldsOptions = function(){
       var optionsHtml = "";
-      for(var i = 0; i < this.dm.projects.length; i++) {
-        var project = this.dm.projects[i];
-        if(i == 0) {
-          this.dm.selectedProject = project;
+      for(var index in this.dm.fields) {
+        if(index == 1 || index == 2 || index == 3) {
+          continue;
         }
-        optionsHtml += "<option project_id='" + project.id
-                    + "' value='" + project.name + "' index_id='" + i + "' >" +
-                    project.name + "</option>";
-      }
-      $("#ih-project-select").html(optionsHtml);
-      this.onProjectSelected();
-    };
-    
-    account.prototype.updateTasks = function(){
-      var data = [];
-      for(var i = 0; i < this.dm.tasks.length; i++) {
-        var item = this.dm.tasks[i];
-        var task = {
-          "工作任务":item.name,
-          "开始时间":item.beginDate,
-          "结束时间":item.endDate,
-          "主要负责人":item.principal,
-          "任务进度":item.schedule
-        };
-        data.push(task);
+        var fieldInfo = this.dm.fields[index];
+        var field = fieldInfo['fields'];
+        optionsHtml += "<option field_id='" + field.ID
+                    + "' value='" + field.field + "' type='" + field.type + "' >" +
+                    field.field + "</option>";
       }
       
-      $('#ih-gantt-table').handsontable('loadData', data);
+      for(var i = 0; i < 3; i++){
+        var index = i+1;
+        var fieldInfo = this.dm.fields[index];
+        var field = fieldInfo['fields'];
+        optionsHtml += "<option field_id='" + field.ID
+                    + "' value='" + field.field + "' type='" + field.type + "' >" +
+                    field.field + "</option>";
+      }
+      
+      $("#ih-field-select").html(optionsHtml);
+      this.onFieldSelected();
     };
     
     account.prototype.updateSuccess = function(){
       ih.plugins.rootPlugin.hideMaskSpinner();
     };
     
-    account.prototype.onProjectSelected = function(){
-      $("#ih-gantt-project-name").html(this.dm.selectedProject.name);
-      this.dm.doLoadTasks();
+    account.prototype.onFieldSelected = function(){
+      var index = $("#ih-field-select").find("option:selected").attr("field_id");
+      var fieldInfo = this.dm.fields[index];
+      var details = fieldInfo['details'];
+      var optionsHtml = "";
+      for(var i = 0; i < details.length; i++){
+        var d = details[i];
+        optionsHtml += "<option field_id='" + d.field_id
+                    + "' value='" + d.name + "' detail_id='" + d.ID + "' >" +
+                    d.name + "</option>";
+      }
+      $("#ih-field-detail").html(optionsHtml);
     };
     
     account.prototype.showLoginDialog = function(){
@@ -115,6 +118,7 @@
     
     account.prototype.onTallyClicked = function(){
       $("#ih-reportContainer").html(this.tallyHtml);
+      
       var sc = new ih.Scroll("scrollWrapper");
       $("#scrollLeftButton").click(ih.$F(function(){
         sc.toElement("scrollRight", 750);
@@ -124,10 +128,45 @@
         sc.toElement("scrollLeft", 750);
       }).bind(this));
       
+      var me = this;
+      $("#ih-field-select").change(function(){
+        me.onFieldSelected();
+      });
+      
+      $("#ih-add-record-button").click(ih.$F(function(){
+        var money = $("#accountMoney")[0].value;
+        var desc = $("#accountDescription")[0].value;
+        var field = $("#ih-field-select").find("option:selected").attr("field_id");
+        var detail = $("#ih-field-detail").find("option:selected").attr("detail_id");
+        if(!(/^\d+\.{0,1}\d+$/.test(money))){
+          this.showMessage({title:"温馨提示", text:"请在金额栏输入数字"});
+          return;
+        }
+        
+        var paras = {"money":money,
+                     "description":desc,
+                     "fieldId":field,
+                     "detailId":detail,
+                     "userId":ih.plugins.rootViewController.dm.sysUser.id
+                     };
+        ih.plugins.rootPlugin.showMaskSpinner();
+        this.dm.addRecord(paras);
+        
+        
+      }).bind(this));
+      
+    };
+    
+    account.prototype.getAllRecordsSuccess = function(){
+      var me = this;
+      $('[rel*="data{menuitem}"]').setData({ menuitem : me.dm.allRecords });
+      ih.plugins.rootPlugin.hideMaskSpinner();
     };
     
     account.prototype.onStatisticsClicked = function(){
-      $("#ih-reportContainer").html("");
+      ih.plugins.rootPlugin.showMaskSpinner();
+      this.dm.loadAllAccountRecord({"uid":ih.plugins.rootViewController.dm.sysUser.id});
+      $("#ih-reportContainer").html(this.accountListHtml);
     };
     
     account.prototype.onAnalyseClicked = function(){
@@ -193,9 +232,27 @@
                   '</div>'+
                   '<div id="scrollRight" style="position:absolute;top:0px;width:678px;height:300px;"></div>'+
                 '</div>';
+                
+      this.accountListHtml = '<style>.account-list{color:#666}.account-list:hover{text-decoration: none;}</style><div style="padding:0 0 0 8px;"><li style="padding:0;" rel="data{menuitem}"><a class="account-list" rel="data{menuitem.text;menuitem.link@href;menuitem.id@id;menuitem.type@type}" type="" href="javascript:void(0)"></a></li></div>';
       
     };
     
+    account.prototype.showMessage = function(dialogMsg){
+      // Dialog
+        $('#dialog').dialog({
+            autoOpen: false,
+            width: 600,
+            title: dialogMsg.title,
+            buttons: {
+                "Sure": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        // Dialog Link
+        $('#dialog').html(dialogMsg.text).dialog('open');
+    };
     
 
   });

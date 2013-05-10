@@ -13,77 +13,39 @@
   
     dm.prototype.init = function(){
       this.request = new ih.Service();
-      this.projects = [];
-      this.tasks = [];
-      this.selectedProject = null;
+      this.fields = [];
+      this.allRecords = [];
     };
     
-    dm.prototype.doLoadProjects = function(paras){
-      this.request.callService(paras, ih.$F(function(response){
+    dm.prototype.doLoadFields = function(){
+      this.request.callService({}, ih.$F(function(response){
         if (1 == response.status) {
-            this.projects = response.data;
-            this.delegate.updateProjectOptions();
+            this.fields = response.data;
+            this.delegate.updateFieldsOptions();
         } else {
             
         }
-      }).bind(this), ih.rootUrl + "project/getAllProjects", "POST");
+      }).bind(this), ih.rootUrl + "account/getFields", "POST");
     };
     
-    dm.prototype.newProject = function(paras){
+    dm.prototype.addRecord = function(paras){
       this.request.callService(paras, ih.$F(function(response){
           if (1 == response.status) {
             this.delegate.updateSuccess();
           } else {
             this.delegate.updateSuccess();
           }
-        }).bind(this), ih.rootUrl + "project/newProject", "POST");
-    }
+        }).bind(this), ih.rootUrl + "account/addRecord", "POST");
+    };
     
-    dm.prototype.doLoadTasks = function(){
-      paras = {
-        rowsPerPage : 100,
-        pageIndex: 1,
-        projectID: this.selectedProject.id
-      };
+    dm.prototype.loadAllAccountRecord = function(paras){
       this.request.callService(paras, ih.$F(function(response){
           if (1 == response.status) {
-              this.tasks = response.data;
-              this.delegate.updateTasks();
-          } else {
-              
-          }
-        }).bind(this), ih.rootUrl + "gantt/getTasks", "POST");
-    }
-    
-    dm.prototype.doUpdateTask = function(paras){
-      this.request.callService(paras, ih.$F(function(response){
-          if (1 == response.status) {
-            this.delegate.updateSuccess();
+            this.allRecords = response.data;
+            this.delegate.getAllRecordsSuccess();
           } else {
             this.delegate.updateSuccess();
           }
-        }).bind(this), ih.rootUrl + "gantt/update", "POST");
-    }
-    
-    dm.prototype.insert = function(paras){
-      this.request.callService(paras, ih.$F(function(response){
-          if (1 == response.status) {
-            this.delegate.updateSuccess();
-          } else {
-            this.delegate.updateSuccess();
-          }
-        }).bind(this), ih.rootUrl + "gantt/insert", "POST");
-    }
-    
-    dm.prototype.deleteTask = function(paras){
-      this.request.callService(paras, ih.$F(function(response){
-          if (1 == response.status) {
-            this.delegate.updateSuccess();
-          } else {
-            this.delegate.updateSuccess();
-          }
-        }).bind(this), ih.rootUrl + "gantt/delete", "POST");
-    }
-    
-      
+        }).bind(this), ih.rootUrl + "account/loadAllAccountRecord", "POST");
+    };
   });
