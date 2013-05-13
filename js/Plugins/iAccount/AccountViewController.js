@@ -230,7 +230,35 @@
                     '<div><a id="ih-add-record-button" class="button-fillet" style="text-decoration: none;float:right; margin-left:8px;">确定</a></div>'+
                     '</div></div>' +
                   '</div>'+
-                  '<div id="scrollRight" style="position:absolute;top:0px;width:678px;height:300px;"></div>'+
+                  '<div id="scrollRight" style="position:absolute;top:0px;width:678px;height:300px;">'+
+                    '<div style="padding:52px 10px 10px 30px;"><h4>固定薪资</h4>' +
+                      '<font size="2"><label><span class="dslabel">实际收入:</span></label></font>' +
+                      '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="actualIncome" name="actualIncome"/>' +
+                      '<font size="2"><label style="padding-left: 20px;"><span class="dslabel">基本工资:</span></label></font>' +
+                        '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="basicIncome" name="basicIncome"/>' +
+                      '<select id="ih-salary-month" style="float:right;"><option>1</option><option>2</option><option>3</option><option>4</option><option selected="selected">5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>'+
+                      '<select id="ih-salary-year" style="float:right;"><option>2011</option><option>2012</option><option selected="selected">2013</option><option>2014</option><option>2015</option><option>2016</option><option>2017</option><option>2018</option><option>2019</option></select>'+
+                      '<div style="padding-top:8px;">'+
+                        '<font size="2"><label><span class="dslabel">公积金数:</span></label></font>' +
+                        '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="reservedFunds" name="reservedFunds"/>' +
+                        '<font size="2"><label style="padding-left: 20px;"><span class="dslabel">医疗保险:</span></label></font>' +
+                        '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="medicalInsure" name="medicalInsure"/>' +
+                      '</div>'+
+                      '<div style="padding-top:8px;">'+
+                        '<font size="2"><label><span class="dslabel">养老保险:</span></label></font>' +
+                        '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="oldInsure" name="oldInsure"/>' +
+                        '<font size="2"><label style="padding-left: 20px;"><span class="dslabel">失业保险:</span></label></font>' +
+                        '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="loseInsure" name="loseInsure"/>' +
+                      '</div>'+
+                      '<div style="padding-top:8px;">'+
+                        '<font size="2"><label><span class="dslabel">计税基数:</span></label></font>' +
+                        '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="taxBase" name="taxBase"/>' +
+                        '<font size="2"><label style="padding-left: 20px;"><span class="dslabel">个人得税:</span></label></font>' +
+                        '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="individualIncomeTax" name="individualIncomeTax"/>' +
+                        '<div><a id="ih-add-salary-button" class="button-fillet" style="text-decoration: none;float:right; margin-left:8px;">确定</a></div>'+
+                    '</div>'+
+                  '</div>' +
+                  '</div>'+
                 '</div>';
                 
       this.accountListHtml = '<style>.account-list{color:#666}.account-list:hover{text-decoration: none;}</style><div style="padding:0 0 0 8px;"><li style="padding:0;" rel="data{menuitem}"><a class="account-list" rel="data{menuitem.text;menuitem.link@href;menuitem.id@id;menuitem.type@type}" type="" href="javascript:void(0)"></a></li></div>';
