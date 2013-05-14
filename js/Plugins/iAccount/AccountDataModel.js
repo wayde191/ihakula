@@ -38,6 +38,17 @@
         }).bind(this), ih.rootUrl + "account/addRecord", "POST");
     };
     
+    dm.prototype.addSalary = function(paras){
+      this.request.callService(paras, ih.$F(function(response){
+          if (1 == response.status) {
+            this.delegate.updateSuccess();
+          } else {
+            this.delegate.updateSuccess();
+          }
+        }).bind(this), ih.rootUrl + "account/addSalary", "POST");
+    };
+    
+    
     dm.prototype.loadAllAccountRecord = function(paras){
       this.request.callService(paras, ih.$F(function(response){
           if (1 == response.status) {

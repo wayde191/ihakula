@@ -155,6 +155,100 @@
         
       }).bind(this));
       
+      // Set Salary data
+      var today = new Date();
+      var year = today.getFullYear();
+      var month = today.getMonth() + 1;
+      $("#ih-salary-year").val(year);
+      $("#ih-salary-month").val(month);
+      
+      // todo, set default value according to user id
+      $("#actualIncome").val(100);
+      $("#basicIncome").val(200);
+      $("#reservedFunds").val(100);
+      $("#medicalInsure").val(100);
+      $("#oldInsure").val(100);
+      $("#loseInsure").val(100);
+      $("#taxBase").val(100);
+      $("#individualIncomeTax").val(100);
+      $("#companyName").val("Symbio");
+      
+      $("#ih-add-salary-button").click(ih.$F(function(){
+        var actualIncome = $("#actualIncome").val();
+        var basicIncome = $("#basicIncome").val();
+        var reservedFunds = $("#reservedFunds").val();
+        var medicalInsure = $("#medicalInsure").val();
+        var oldInsure = $("#oldInsure").val();
+        var loseInsure = $("#loseInsure").val();
+        var taxBase = $("#taxBase").val();
+        var individualIncomeTax = $("#individualIncomeTax").val();
+        var companyName = $("#companyName").val();
+        
+        var year = $("#ih-salary-year").find("option:selected").val();
+        var month = $("#ih-salary-month").find("option:selected").val();
+        
+        if(!(/^\d+\.{0,1}\d+$/.test(actualIncome))){
+          this.showMessage({title:"温馨提示", text:"请在实际收入栏输入数字"});
+          return;
+        }
+        if(!(/^\d+\.{0,1}\d+$/.test(basicIncome))){
+          this.showMessage({title:"温馨提示", text:"请在基本工资栏输入数字"});
+          return;
+        }
+        if(!(/^\d+\.{0,1}\d+$/.test(reservedFunds))){
+          this.showMessage({title:"温馨提示", text:"请在公积金数栏输入数字"});
+          return;
+        }
+        if(!(/^\d+\.{0,1}\d+$/.test(medicalInsure))){
+          this.showMessage({title:"温馨提示", text:"请在医疗保险栏输入数字"});
+          return;
+        }
+        if(!(/^\d+\.{0,1}\d+$/.test(oldInsure))){
+          this.showMessage({title:"温馨提示", text:"请在养老保险栏输入数字"});
+          return;
+        }
+        if(!(/^\d+\.{0,1}\d+$/.test(loseInsure))){
+          this.showMessage({title:"温馨提示", text:"请在失业保险栏输入数字"});
+          return;
+        }
+        if(!(/^\d+\.{0,1}\d+$/.test(taxBase))){
+          this.showMessage({title:"温馨提示", text:"请在计税基数栏输入数字"});
+          return;
+        }
+        if(!(/^\d+\.{0,1}\d+$/.test(individualIncomeTax))){
+          this.showMessage({title:"温馨提示", text:"请在个人得税栏输入数字"});
+          return;
+        }
+        
+        var actualIncome = $("#actualIncome").val();
+        var basicIncome = $("#basicIncome").val();
+        var reservedFunds = $("#reservedFunds").val();
+        var medicalInsure = $("#medicalInsure").val();
+        var oldInsure = $("#oldInsure").val();
+        var loseInsure = $("#loseInsure").val();
+        var taxBase = $("#taxBase").val();
+        var individualIncomeTax = $("#individualIncomeTax").val();
+        var companyName = $("#companyName").val();
+        
+        var year = $("#ih-salary-year").find("option:selected").val();
+        var month = $("#ih-salary-month").find("option:selected").val();
+        
+        var paras = {"actualIncome":actualIncome,
+                     "basicIncome":basicIncome,
+                     "reservedFunds":reservedFunds,
+                     "medicalInsure":medicalInsure,
+                     "oldInsure":oldInsure,
+                     "loseInsure":loseInsure,
+                     "taxBase":taxBase,
+                     "individualIncomeTax":individualIncomeTax,
+                     "companyName":companyName,
+                     "date":year + "." + month,
+                     "userId":ih.plugins.rootViewController.dm.sysUser.id
+                     };
+        ih.plugins.rootPlugin.showMaskSpinner();
+        this.dm.addSalary(paras);
+      }).bind(this));
+      
     };
     
     account.prototype.getAllRecordsSuccess = function(){
@@ -236,8 +330,8 @@
                       '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="actualIncome" name="actualIncome"/>' +
                       '<font size="2"><label style="padding-left: 20px;"><span class="dslabel">基本工资:</span></label></font>' +
                         '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="basicIncome" name="basicIncome"/>' +
-                      '<select id="ih-salary-month" style="float:right;"><option>1</option><option>2</option><option>3</option><option>4</option><option selected="selected">5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>'+
-                      '<select id="ih-salary-year" style="float:right;"><option>2011</option><option>2012</option><option selected="selected">2013</option><option>2014</option><option>2015</option><option>2016</option><option>2017</option><option>2018</option><option>2019</option></select>'+
+                      '<select id="ih-salary-month" style="float:right;"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>'+
+                      '<select id="ih-salary-year" style="float:right;"><option>2011</option><option>2012</option><option>2013</option><option>2014</option><option>2015</option><option>2016</option><option>2017</option><option>2018</option><option>2019</option></select>'+
                       '<div style="padding-top:8px;">'+
                         '<font size="2"><label><span class="dslabel">公积金数:</span></label></font>' +
                         '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="reservedFunds" name="reservedFunds"/>' +
@@ -255,6 +349,11 @@
                         '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="taxBase" name="taxBase"/>' +
                         '<font size="2"><label style="padding-left: 20px;"><span class="dslabel">个人得税:</span></label></font>' +
                         '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="individualIncomeTax" name="individualIncomeTax"/>' +
+                      '</div>'+
+                      '<div style="padding-top:8px;">'+
+                        '<font size="2"><label><span class="dslabel">公司名称:</span></label></font>' +
+                        '<input size="30" autocapitalize="off" oncut="return false ;" oncopy="return false ;" maxlength="32" id="companyName" name="companyName"/>' +
+                        
                         '<div><a id="ih-add-salary-button" class="button-fillet" style="text-decoration: none;float:right; margin-left:8px;">确定</a></div>'+
                     '</div>'+
                   '</div>' +

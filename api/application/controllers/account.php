@@ -93,6 +93,89 @@ class Account extends CI_Controller {
       }
     }
   
+    public function addSalary() {
+      global $IH_SESSION_LOGGEDIN;
+      session_start();
+
+      $actualIncome = $_POST['actualIncome'];
+      $basicIncome = $_POST['basicIncome'];
+      $companyName = $_POST['companyName'];
+      $salaryDate = $_POST['date'];
+      $individualIncomeTax = $_POST['individualIncomeTax'];
+      $loseInsure = $_POST['loseInsure'];
+      $medicalInsure = $_POST['medicalInsure'];
+      $oldInsure = $_POST['oldInsure'];
+      $reservedFunds = $_POST['reservedFunds'];
+      $taxBase = $_POST['taxBase'];
+      $userId = $_POST['userId'];
+      
+      date_default_timezone_set('Asia/Chongqing');
+      $date = date('Y-m-d H:i:s');
+      
+      if ($_SESSION[$IH_SESSION_LOGGEDIN]) {
+          $this->load->database();
+          
+          $sql = "INSERT INTO  `ih_account_salary` (
+                    `user_id` ,
+                    `date` ,
+                    `company` ,
+                    `salary_basic` ,
+                    `salary_actual` ,
+                    `salary_reserved_funds` ,
+                    `salary_pension` ,
+                    `salary_tax_base` ,
+                    `salary_individual_income_tax` ,
+                    `salary_unemployed` ,
+                    `salary_medical`
+                    )
+                    VALUES (
+                    '$userId',  '$salaryDate',  '$companyName',  '$basicIncome',  '$actualIncome', '$reservedFunds', '$oldInsure', '$taxBase', '$individualIncomeTax', '$loseInsure',  '$medicalInsure'
+                    )";
+                    
+          $this->db->query($sql);
+          
+          if (1 == $this->db->affected_rows()) {
+            $description = $companyName . ',' . $salaryDate . ',工资收入';
+            $sql = "INSERT INTO  `ih_account_money` (
+                    `user_id` ,
+                    `field_id` ,
+                    `field_detail_id` ,
+                    `money` ,
+                    `description` ,
+                    `date`
+                    )
+                    VALUES (
+                    '$userId',  '1',  '1',  '$actualIncome',  '$description',  '$date'
+                    )";
+                    
+          $this->db->query($sql);
+          
+          $description = $companyName . ',' . $salaryDate . ',税收支出';
+          $money = $basicIncome - $actualIncome;
+          $sql = "INSERT INTO  `ih_account_money` (
+                    `user_id` ,
+                    `field_id` ,
+                    `field_detail_id` ,
+                    `money` ,
+                    `description` ,
+                    `date`
+                    )
+                    VALUES (
+                    '$userId',  '12',  '61',  '$money',  '$description',  '$date'
+                    )";
+                    
+          $this->db->query($sql);
+          
+            echo json_encode(array("status" => 1));
+          } else {
+            echo json_encode(array("status" => 0));
+          }
+
+      } else {
+          echo json_encode(array("status" => 0, "errorCode" => -1));
+      }
+    }
+  
   public function loadAllAccountRecord() {
     global $IH_SESSION_LOGGEDIN;
     session_start();
