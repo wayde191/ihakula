@@ -162,16 +162,17 @@
       $("#ih-salary-year").val(year);
       $("#ih-salary-month").val(month);
       
-      // todo, set default value according to user id
-      $("#actualIncome").val(100);
-      $("#basicIncome").val(200);
-      $("#reservedFunds").val(100);
-      $("#medicalInsure").val(100);
-      $("#oldInsure").val(100);
-      $("#loseInsure").val(100);
-      $("#taxBase").val(100);
-      $("#individualIncomeTax").val(100);
-      $("#companyName").val("Symbio");
+      if(1 == ih.plugins.rootViewController.dm.sysUser.id){
+        $("#actualIncome").val(12745.55);
+        $("#basicIncome").val(16000);
+        $("#reservedFunds").val(816);
+        $("#medicalInsure").val(139);
+        $("#oldInsure").val(544);
+        $("#loseInsure").val(13.6);
+        $("#taxBase").val(10987.4);
+        $("#individualIncomeTax").val(1741.85);
+        $("#companyName").val("Symbio");
+      }
       
       $("#ih-add-salary-button").click(ih.$F(function(){
         var actualIncome = $("#actualIncome").val();
