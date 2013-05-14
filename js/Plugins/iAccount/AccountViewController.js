@@ -162,7 +162,7 @@
       $("#ih-salary-year").val(year);
       $("#ih-salary-month").val(month);
       
-      if(1 == ih.plugins.rootViewController.dm.sysUser.id){
+      if("1" == ih.plugins.rootViewController.dm.sysUser.id){
         $("#actualIncome").val(12745.55);
         $("#basicIncome").val(16000);
         $("#reservedFunds").val(816);
