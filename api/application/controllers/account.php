@@ -168,7 +168,7 @@ class Account extends CI_Controller {
           
             echo json_encode(array("status" => 1));
           } else {
-            echo json_encode(array("status" => 0, "errorCode" => 1003)));
+            echo json_encode(array("status" => 0, "errorCode" => 1003));
           }
 
       } else {
