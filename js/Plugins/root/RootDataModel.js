@@ -26,7 +26,7 @@
             this.delegate.loginSuccess();
             this.pubsub.publish("loginSucceed");
         } else {
-            
+            this.delegate.loginFailed(response.errorCode);
         }
       }).bind(this), ih.rootUrl + "user/login", "POST");
     };

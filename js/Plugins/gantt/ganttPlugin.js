@@ -16,7 +16,7 @@
     
     plugin.prototype.scriptsLoaded = function(){
       ih.plugins.rootPlugin.hideMaskSpinner();
-      ih.plugins.ganttViewController = new ih.plugins.ganttViewController();
+      ih.plugins.gantt = new ih.plugins.ganttViewController();
     };
     
     

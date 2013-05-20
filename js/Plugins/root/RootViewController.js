@@ -49,6 +49,10 @@
         this.showMessage({title:"温馨提示", text:"Coming soon"});
       }).bind(this));
       
+      $("#gn-home").click(ih.$F(function(){
+        this.buildMainPage();
+      }).bind(this));
+      
       $("#gn-products").click(ih.$F(function(){
         this.showMessage({title:"温馨提示", text:"Coming soon"});
       }).bind(this));
@@ -134,6 +138,12 @@
       this.setUserinfo();
     };
     
+    root.prototype.loginFailed = function(errorCode){
+      this.registerSpinner.stop();
+      this.onCloseMaskBtnClicked();
+      this.showMessage({title:"温馨提示", text:this.errorInfo[errorCode]});
+    };
+    
     root.prototype.setUserinfo = function(){
       $("#ih-hi").html("hi," + this.dm.sysUser.name);
       $("#ih-login-button").html("Logout");
@@ -189,6 +199,13 @@
       $("#ih-mask").addAnimation("fadeIn");
       $("#ds_container").html(this.loginHtml);
       $("#ds_container").addAnimation("bounceInUp");
+      
+      var me = this;
+      $('#accountpassword').bind('keypress',function(event){
+        if(event.keyCode == "13") {
+          me.onSignInBtnClicked();
+        }
+      });
       
       $("#ih-register-btn").click(ih.$F(function(){
         this.onRegisterBtnClicked();
@@ -315,7 +332,20 @@
     
     root.prototype.setupErrorinfo = function(){
       this.errorInfo = {
-        900 : this.languages[this.selectedLanguage]["errorcode_900"]
+        900 : this.languages[this.selectedLanguage]["errorcode_900"],
+        901 : this.languages[this.selectedLanguage]["errorcode_901"],
+        902 : this.languages[this.selectedLanguage]["errorcode_902"],
+        903 : this.languages[this.selectedLanguage]["errorcode_903"],
+        910 : this.languages[this.selectedLanguage]["errorcode_910"],
+        1001 : this.languages[this.selectedLanguage]["errorcode_1001"],
+        1002 : this.languages[this.selectedLanguage]["errorcode_1002"],
+        1003 : this.languages[this.selectedLanguage]["errorcode_1003"],
+        1004 : this.languages[this.selectedLanguage]["errorcode_1004"],
+        1080 : this.languages[this.selectedLanguage]["errorcode_1080"],
+        1081 : this.languages[this.selectedLanguage]["errorcode_1081"],
+        1082 : this.languages[this.selectedLanguage]["errorcode_1082"],
+        1083 : this.languages[this.selectedLanguage]["errorcode_1083"],
+        1084 : this.languages[this.selectedLanguage]["errorcode_1084"]
       };
     };
     
@@ -339,7 +369,24 @@
           "footer-aboutme":"关于我",
           "footer-privacy":"隐私权和条款",
           
-          "registerSucceed":"恭喜，注册成功，请登录"
+          "registerSucceed":"恭喜，注册成功，请登录",
+          
+          "errorcode_900":"用户名密码不能为空",
+          "errorcode_901":"请确认密码正确是否相等",
+          "errorcode_902":"该ID已经被注册",
+          "errorcode_903":"服务器故障，请稍后重试",
+          "errorcode_910":"用户不存在",
+          
+          "errorcode_1001":"取账单类别失败，请重试",
+          "errorcode_1002":"添加记录失败，请重试",
+          "errorcode_1003":"添加薪水失败，请重试",
+          "errorcode_1004":"取所有记录失败，请重试",
+          
+          "errorcode_1080":"取任务失败，请重试",
+          "errorcode_1081":"取所有任务失败，请重试",
+          "errorcode_1082":"更新任务失败，请重试",
+          "errorcode_1083":"删除任务失败，请重试",
+          "errorcode_1084":"新建任务失败，请重试"
         },
         "en" : {
           

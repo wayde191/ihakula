@@ -49,7 +49,7 @@ class Account extends CI_Controller {
 
       echo json_encode(array("status" => 1, "data" => $fieldInfoArr));
     } else {
-      echo json_encode(array("status" => 0, "errorCode" => -1001));
+      echo json_encode(array("status" => 0, "errorCode" => 1001));
     }
   }
     
@@ -89,7 +89,7 @@ class Account extends CI_Controller {
           }
 
       } else {
-          echo json_encode(array("status" => 0, "errorCode" => -1));
+          echo json_encode(array("status" => 0, "errorCode" => 1002));
       }
     }
   
@@ -168,11 +168,11 @@ class Account extends CI_Controller {
           
             echo json_encode(array("status" => 1));
           } else {
-            echo json_encode(array("status" => 0));
+            echo json_encode(array("status" => 0, "errorCode" => 1003)));
           }
 
       } else {
-          echo json_encode(array("status" => 0, "errorCode" => -1));
+          echo json_encode(array("status" => 0, "errorCode" => 1003));
       }
     }
   
@@ -225,7 +225,7 @@ class Account extends CI_Controller {
         echo json_encode(array("status" => 1, "data" => $resultArr));
 
     } else {
-        echo json_encode(array("status" => 0, "errorCode" => -1));
+        echo json_encode(array("status" => 0, "errorCode" => 1004));
     }
 	}
 }

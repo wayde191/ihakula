@@ -16,7 +16,7 @@
     
     plugin.prototype.scriptsLoaded = function(){
       ih.plugins.rootPlugin.hideMaskSpinner();
-      ih.plugins.accountViewController = new ih.plugins.accountViewController();
+      ih.plugins.account = new ih.plugins.accountViewController();
     };
     
     

@@ -39,7 +39,7 @@ class Gantt extends CI_Controller {
 
             echo json_encode(array("status" => 1, "totalPage" => $totalPage, "data" => $tasksArr));
         } else {
-            echo json_encode(array("status" => 0, "errorCode" => -1));
+            echo json_encode(array("status" => 0, "errorCode" => 1080));
         }
     }
     
@@ -64,7 +64,7 @@ class Gantt extends CI_Controller {
 
             echo json_encode(array("status" => 1, "data" => $tasksArr));
         } else {
-            echo json_encode(array("status" => 0, "errorCode" => -1));
+            echo json_encode(array("status" => 0, "errorCode" => 1081));
         }
   }
     
@@ -98,7 +98,7 @@ class Gantt extends CI_Controller {
             }
 
         } else {
-            echo json_encode(array("status" => 0, "errorCode" => -1));
+            echo json_encode(array("status" => 0, "errorCode" => 1082));
         }
     }
     
@@ -122,7 +122,7 @@ class Gantt extends CI_Controller {
             }
 
         } else {
-            echo json_encode(array("status" => 0, "errorCode" => -1));
+            echo json_encode(array("status" => 0, "errorCode" => 1083));
         }
     }
     
@@ -162,7 +162,7 @@ class Gantt extends CI_Controller {
             }
 
         } else {
-            echo json_encode(array("status" => 0, "errorCode" => -1));
+            echo json_encode(array("status" => 0, "errorCode" => 1084));
         }
     }
 }
