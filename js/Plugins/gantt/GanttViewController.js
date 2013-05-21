@@ -61,6 +61,7 @@
     
     gantt.prototype.updateSuccess = function(){
       ih.plugins.rootPlugin.hideMaskSpinner();
+      this.showMessage({title:"温馨提示", text:"成功"});
     };
     
     gantt.prototype.onProjectSelected = function(){
@@ -221,6 +222,28 @@
         });
         
         window.ihSysEngine.pubsub.subscribe("ih-gantt-tableSubject", this, this.onDeleteBtnClicked);
+    };
+    
+    gantt.prototype.showMessage = function(dialogMsg){
+      // Dialog
+        $('#dialog').dialog({
+            autoOpen: false,
+            width: 600,
+            title: dialogMsg.title,
+            buttons: {
+                "Sure": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        // Dialog Link
+        $('#dialog').html(dialogMsg.text).dialog('open');
+    };
+    
+    gantt.prototype.serviceCallFailed = function(errorCode){
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      this.showMessage({title:"温馨提示", text:ih.plugins.rootViewController.errorInfo[errorCode]});
     };
     
     

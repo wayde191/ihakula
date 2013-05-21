@@ -24,7 +24,7 @@
             this.projects = response.data;
             this.delegate.updateProjectOptions();
         } else {
-            
+            this.delegate.serviceCallFailed(response.errorCode);
         }
       }).bind(this), ih.rootUrl + "project/getAllProjects", "POST");
     };
@@ -34,7 +34,7 @@
           if (1 == response.status) {
             this.delegate.updateSuccess();
           } else {
-            this.delegate.updateSuccess();
+            this.delegate.serviceCallFailed(response.errorCode);
           }
         }).bind(this), ih.rootUrl + "project/newProject", "POST");
     }
@@ -50,7 +50,7 @@
               this.tasks = response.data;
               this.delegate.updateTasks();
           } else {
-              
+              this.delegate.serviceCallFailed(response.errorCode);
           }
         }).bind(this), ih.rootUrl + "gantt/getTasks", "POST");
     }
@@ -60,7 +60,7 @@
           if (1 == response.status) {
             this.delegate.updateSuccess();
           } else {
-            this.delegate.updateSuccess();
+            this.delegate.serviceCallFailed(response.errorCode);
           }
         }).bind(this), ih.rootUrl + "gantt/update", "POST");
     }
@@ -70,7 +70,7 @@
           if (1 == response.status) {
             this.delegate.updateSuccess();
           } else {
-            this.delegate.updateSuccess();
+            this.delegate.serviceCallFailed(response.errorCode);
           }
         }).bind(this), ih.rootUrl + "gantt/insert", "POST");
     }
@@ -80,7 +80,7 @@
           if (1 == response.status) {
             this.delegate.updateSuccess();
           } else {
-            this.delegate.updateSuccess();
+            this.delegate.serviceCallFailed(response.errorCode);
           }
         }).bind(this), ih.rootUrl + "gantt/delete", "POST");
     }

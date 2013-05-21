@@ -26,6 +26,7 @@
     
     account.prototype.loadFields = function(){
       if(ih.plugins.rootViewController.dm.sysUser.isLogin()){
+        ih.plugins.rootPlugin.showMaskSpinner();
         this.dm.doLoadFields();
       } else {
         this.showLoginDialog();
@@ -33,6 +34,7 @@
     };
     
     account.prototype.updateFieldsOptions = function(){
+      ih.plugins.rootPlugin.hideMaskSpinner();
       var optionsHtml = "";
       for(var index in this.dm.fields) {
         if(index == 1 || index == 2 || index == 3) {
@@ -60,6 +62,7 @@
     
     account.prototype.updateSuccess = function(){
       ih.plugins.rootPlugin.hideMaskSpinner();
+      this.showMessage({title:"温馨提示", text:"成功"});
     };
     
     account.prototype.onFieldSelected = function(){
@@ -250,6 +253,11 @@
         this.dm.addSalary(paras);
       }).bind(this));
       
+      // Set option value
+      if(this.dm.fields){
+        this.updateFieldsOptions();
+      }
+      
     };
     
     account.prototype.getAllRecordsSuccess = function(){
@@ -380,6 +388,26 @@
 
         // Dialog Link
         $('#dialog').html(dialogMsg.text).dialog('open');
+    };
+    
+    account.prototype.loadFieldsFailed = function(errorCode){
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      this.showMessage({title:"温馨提示", text:ih.plugins.rootViewController.errorInfo[errorCode]});
+    };
+    
+    account.prototype.addRecordFailed = function(errorCode){
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      this.showMessage({title:"温馨提示", text:ih.plugins.rootViewController.errorInfo[errorCode]});
+    };
+    
+    account.prototype.addSalaryFailed = function(errorCode){
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      this.showMessage({title:"温馨提示", text:ih.plugins.rootViewController.errorInfo[errorCode]});
+    };
+    
+    account.prototype.loadAllAccountRecordFailed = function(errorCode) {
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      this.showMessage({title:"温馨提示", text:ih.plugins.rootViewController.errorInfo[errorCode]});
     };
     
 

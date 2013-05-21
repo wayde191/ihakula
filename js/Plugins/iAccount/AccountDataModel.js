@@ -13,7 +13,7 @@
   
     dm.prototype.init = function(){
       this.request = new ih.Service();
-      this.fields = [];
+      this.fields = null;
       this.allRecords = [];
     };
     
@@ -23,7 +23,7 @@
             this.fields = response.data;
             this.delegate.updateFieldsOptions();
         } else {
-            
+            this.delegate.loadFieldsFailed(response.errorCode);
         }
       }).bind(this), ih.rootUrl + "account/getFields", "POST");
     };
@@ -33,7 +33,7 @@
           if (1 == response.status) {
             this.delegate.updateSuccess();
           } else {
-            this.delegate.updateSuccess();
+            this.delegate.addRecordFailed(response.errorCode);
           }
         }).bind(this), ih.rootUrl + "account/addRecord", "POST");
     };
@@ -43,7 +43,7 @@
           if (1 == response.status) {
             this.delegate.updateSuccess();
           } else {
-            this.delegate.updateSuccess();
+            this.delegate.addSalaryFailed(response.errorCode);
           }
         }).bind(this), ih.rootUrl + "account/addSalary", "POST");
     };
@@ -55,7 +55,7 @@
             this.allRecords = response.data;
             this.delegate.getAllRecordsSuccess();
           } else {
-            this.delegate.updateSuccess();
+            this.delegate.loadAllAccountRecordFailed(response.errorCode);
           }
         }).bind(this), ih.rootUrl + "account/loadAllAccountRecord", "POST");
     };
