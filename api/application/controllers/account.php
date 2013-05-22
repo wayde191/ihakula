@@ -145,14 +145,15 @@ class Account extends CI_Controller {
                     `date`
                     )
                     VALUES (
-                    '$userId',  '1',  '1',  '$actualIncome',  '$description',  '$date'
+                    '$userId',  '1',  '1',  '$basicIncome',  '$description',  '$date'
                     )";
                     
-          $this->db->query($sql);
-          
-          $description = $companyName . ',' . $salaryDate . ',税收支出';
-          $money = $basicIncome - $actualIncome;
-          $sql = "INSERT INTO  `ih_account_money` (
+            $this->db->query($sql);
+            
+            // salary_reserved_funds, 公积金
+            $fundsIncome = $reservedFunds * 2;
+            $description = $companyName . ',' . $salaryDate . ',公积金收入';
+            $sql = "INSERT INTO  `ih_account_money` (
                     `user_id` ,
                     `field_id` ,
                     `field_detail_id` ,
@@ -161,10 +162,27 @@ class Account extends CI_Controller {
                     `date`
                     )
                     VALUES (
-                    '$userId',  '12',  '61',  '$money',  '$description',  '$date'
+                    '$userId',  '1',  '1',  '$fundsIncome',  '$description',  '$date'
                     )";
                     
-          $this->db->query($sql);
+            $this->db->query($sql);
+            
+            // fee
+            $description = $companyName . ',' . $salaryDate . ',税收支出';
+            $money = $basicIncome - $actualIncome;
+            $sql = "INSERT INTO  `ih_account_money` (
+                      `user_id` ,
+                      `field_id` ,
+                      `field_detail_id` ,
+                      `money` ,
+                      `description` ,
+                      `date`
+                      )
+                      VALUES (
+                      '$userId',  '12',  '61',  '$money',  '$description',  '$date'
+                      )";
+                      
+            $this->db->query($sql);
           
             echo json_encode(array("status" => 1));
           } else {
@@ -228,6 +246,164 @@ class Account extends CI_Controller {
         echo json_encode(array("status" => 0, "errorCode" => 1004));
     }
 	}
+  
+  public function getAnalyseYears() {
+    global $IH_SESSION_LOGGEDIN;
+    session_start();
+    
+		$uid = $_POST['uid'];
+    $yearsArr = array();
+    
+    if ($_SESSION[$IH_SESSION_LOGGEDIN]) {
+      $this->load->database();
+      
+      $query = '(SELECT `date` FROM `ih_account_money` where `user_id`="' . $uid . '" limit 1) union (SELECT `date` FROM `ih_account_money` where `user_id`="' . $uid . '" order by id desc limit 1)';
+          
+      $query = $this->db->query($query);
+      foreach ($query->result() as $row) {
+        $arr_time = explode("-", $row->date);
+        array_push($yearsArr, $arr_time[0]);
+      }
+      
+      sort($yearsArr);
+      $yearsArr = array_unique($yearsArr);
+      
+      if(2 == count($yearsArr)){
+        $fromYear = (int)$yearsArr[0];
+        $toYear = (int)$yearsArr[1];
+        
+        $yearsArr = array();
+        for($i = $toYear; $i > $fromYear - 1; $i--){
+          array_push($yearsArr, $i);
+        }
+      }
+      
+      if(0 == count($yearsArr)) {
+        echo json_encode(array("status" => 0, "errorCode" => 1005));
+      } else {
+        echo json_encode(array("status" => 1, "data" => $yearsArr));
+      }
+    } else {
+      echo json_encode(array("status" => 0, "errorCode" => 9001));
+    }
+    
+  }
+  
+  public function _buildAccount($records) {
+    $recordArr = $records;
+    $fieldsArr = array();
+    $detailArr = array();
+    $resultArr = array();
+  
+    $this->load->database();
+  
+    $query = 'SELECT * FROM ih_account_field order by ID asc';
+    $query = $this->db->query($query);
+    foreach ($query->result() as $row) {
+      $fieldsArr[$row->ID] = $row;
+    }
+    
+    $query = 'SELECT * FROM ih_account_field_detail order by ID asc';
+    $query = $this->db->query($query);
+    foreach ($query->result() as $row) {
+      $detailArr[$row->ID] = $row;
+    }
+  
+    for($i = 0; $i < count($recordArr); $i++){
+      $record = $recordArr[$i];
+      $field = $fieldsArr[$record->field_id];
+      $detail = $detailArr[$record->field_detail_id];
+      $text = "";
+      if(1 == $field->type){
+        $text .= "(+) ";
+      } else {
+        $text .= "(-) ";
+      }
+      $text .= $field->field . ":" . $detail->name . " " . $record->money . "(CNY)" . " " . $record->description . " " . $record->date;
+      $data = array("id" => $record->ID, "type" => $field->type, "text" => $text, "date" => $record->date, "money" => $record->money);
+      array_push($resultArr, $data);
+    }
+
+    return $resultArr;
+  }
+  
+  public function getAnalyse() {
+    global $IH_SESSION_LOGGEDIN;
+    session_start();
+    
+		$year = $_POST['year'];
+    $fromYear = $year . "-00-00 00:00:00";
+    $toYear = ((int)$year + 1) . "-00-00 00:00:00";
+    
+    $recordsArr = array();
+    $monthsArr = array();
+    $returnArr = array();
+    
+    if ($_SESSION[$IH_SESSION_LOGGEDIN]) {
+      $this->load->database();
+        
+      $query = '(SELECT * FROM `ih_account_money` where `date`>"' . $fromYear . '" and `date`<"' . $toYear . '" order by id desc)';
+      
+      $query = $this->db->query($query);
+      foreach ($query->result() as $row) {
+        array_push($recordsArr, $row);
+      }
+      
+      $resultArr = $this->_buildAccount($recordsArr);
+      $yearIncome = 0.0;
+      $yearOutcome = 0.0;
+      for($i = 0; $i < count($resultArr); $i++) {
+        $record = $resultArr[$i];
+        $arr_time = explode("-", $record["date"]);
+        $month = $arr_time[1];
+        
+        $monthArr = array();
+        if(!isset($monthsArr[$month])){
+          $monthArr = array("income" => array(), "outcome" => array(), "earn"=>0.0, "use"=>0.0, "month"=>$month);
+          $monthsArr[$month] = $monthArr;
+        }
+        $monthArr = $monthsArr[$month];
+        
+        $use = $monthArr["use"];
+        $earn = $monthArr["earn"];
+        $income = $monthArr["income"];
+        $outcome = $monthArr["outcome"];
+        
+        if("1" == $record["type"]){ // income
+          $earn += (float)$record["money"];
+          $yearIncome += (float)$record["money"];
+          array_push($income, $record);
+        } else {
+          $use += (float)$record["money"];
+          $yearOutcome += (float)$record["money"];
+          array_push($outcome, $record);
+        }
+        $monthArr["use"] = $use;
+        $monthArr["earn"] = $earn;
+        $monthArr["income"] = $income;
+        $monthArr["outcome"] = $outcome;
+        $monthsArr[$month] = $monthArr;
+      }
+      
+      $yearAccount = array("id" => $year, "year" => $year, "type" => "year", "text" => $year . "年 收入:" . $yearIncome . " 支出:" . $yearOutcome . " 产值:" . ($yearIncome - $yearOutcome));
+      array_push($returnArr, $yearAccount);
+      
+      foreach($monthsArr as $monthRecord){
+        $month = $monthRecord["month"];
+        $earn = $monthRecord["earn"];
+        $use = $monthRecord["use"];
+        
+        $monthAccount = array("id" => $month, "year" => $year, "type" => "month", "text" => $year . "-" . $month . " 收入:" . $earn . " 支出:" . $use . " 产值:" . ($earn - $use));
+        array_push($returnArr, $monthAccount);
+      }
+      
+      echo json_encode(array("status" => 1, "data" => array("year" => $returnArr, "month" => $monthsArr)));
+      
+    } else {
+      echo json_encode(array("status" => 0, "errorCode" => 9001));
+    }
+  }
+  
 }
 
 //$award = array('id' => $row->ID, 'text' => $row->content . " : " . $row->date, 'type' => $row->fixed );

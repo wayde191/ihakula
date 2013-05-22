@@ -14,6 +14,8 @@
     dm.prototype.init = function(){
       this.request = new ih.Service();
       this.fields = null;
+      this.analyseYears = null;
+      this.yearsRecords = {};
       this.allRecords = [];
     };
     
@@ -26,6 +28,28 @@
             this.delegate.loadFieldsFailed(response.errorCode);
         }
       }).bind(this), ih.rootUrl + "account/getFields", "POST");
+    };
+    
+    dm.prototype.doLoadAnalyseYears = function(paras){
+      this.request.callService(paras, ih.$F(function(response){
+        if (1 == response.status) {
+            this.analyseYears = response.data;
+            this.delegate.updateYearsOptions();
+        } else {
+            this.delegate.loadFieldsFailed(response.errorCode);
+        }
+      }).bind(this), ih.rootUrl + "account/getAnalyseYears", "POST");
+    };
+    
+    dm.prototype.doLoadYearRecord = function(paras){
+      this.request.callService(paras, ih.$F(function(response){
+        if (1 == response.status) {
+            this.yearsRecords[paras.year] = response.data;
+            this.delegate.getYearRecordSuccess();
+        } else {
+            this.delegate.loadFieldsFailed(response.errorCode);
+        }
+      }).bind(this), ih.rootUrl + "account/getAnalyse", "POST");
     };
     
     dm.prototype.addRecord = function(paras){

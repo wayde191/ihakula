@@ -60,6 +60,28 @@
       this.onFieldSelected();
     };
     
+    account.prototype.updateYearsOptions = function(){
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      var optionsHtml = "";
+      for(var i = 0; i < this.dm.analyseYears.length; i++) {
+        var year = this.dm.analyseYears[i];
+        optionsHtml += "<option year_id='" + year
+                    + "' value='" + year +  "' >" +
+                    year + "</option>";
+      }
+      
+      $("#ih-analyse-year-select").html(optionsHtml);
+      
+      var today = new Date();
+      var year = today.getFullYear();
+      var years = ih.$A(this.dm.analyseYears);
+      if(years.contains(year)){
+        $("#ih-analyse-year-select").val(year);
+      }
+      
+      this.onYearSelected();
+    };
+    
     account.prototype.updateSuccess = function(){
       ih.plugins.rootPlugin.hideMaskSpinner();
       this.showMessage({title:"温馨提示", text:"成功"});
@@ -77,6 +99,17 @@
                     d.name + "</option>";
       }
       $("#ih-field-detail").html(optionsHtml);
+    };
+    
+    account.prototype.onYearSelected = function(){
+      var index = $("#ih-analyse-year-select").find("option:selected").attr("year_id");
+      var paras = {"year":index};
+      if(this.dm.yearsRecords[index]){
+        this.getYearRecordSuccess();
+      } else {
+        ih.plugins.rootPlugin.showMaskSpinner();
+        this.dm.doLoadYearRecord(paras);
+      }
     };
     
     account.prototype.showLoginDialog = function(){
@@ -143,6 +176,11 @@
         var detail = $("#ih-field-detail").find("option:selected").attr("detail_id");
         if(!(/^\d+\.{0,1}\d+$/.test(money))){
           this.showMessage({title:"温馨提示", text:"请在金额栏输入数字"});
+          return;
+        }
+        
+        if(field == 0 && detail == 0){
+          this.showMessage({title:"温馨提示", text:"分类信息无效，请刷新页面获取正确分类信息"});
           return;
         }
         
@@ -266,6 +304,44 @@
       ih.plugins.rootPlugin.hideMaskSpinner();
     };
     
+    account.prototype.getYearRecordSuccess = function(){
+      var index = $("#ih-analyse-year-select").find("option:selected").attr("year_id");
+      var me = this;
+      $('[rel*="data{yearaccount}"]').setData({
+        yearaccount : me.dm.yearsRecords[index]["year"]
+        }, this.onAnalyseRecordClicked.bind(this));
+      ih.plugins.rootPlugin.hideMaskSpinner();
+    };
+    
+    account.prototype.onAnalyseRecordClicked = ih.$F(function(selectedEle){
+        var self = this;
+        var jqEle = $(selectedEle.currentTarget);
+        var id = jqEle.attr('id');
+        var type = jqEle.attr('type');
+        var year = jqEle.attr('year');
+        
+        var detailArr = [];
+        if(type == "year"){
+          var months = this.dm.yearsRecords[year]["month"];
+          for(var m in months){
+            detailArr = detailArr.concat(months[m]["income"]);
+            detailArr = detailArr.concat(months[m]["outcome"]);
+          }
+        } else {
+          var month = this.dm.yearsRecords[year]["month"][id];
+          detailArr = detailArr.concat(month["income"]);
+          detailArr = detailArr.concat(month["outcome"]);
+        }
+        
+        $("#accountYearDetailModel").html('<li style="padding:0;" rel="data{yearaccountdetail}"><a class="account-list" rel="data{yearaccountdetail.text;yearaccountdetail.link@href;yearaccountdetail.id@id;yearaccountdetail.type@type}" type="" href="javascript:void(0)"></a></li>');
+        
+        $('[rel*="data{yearaccountdetail}"]').setData({
+        yearaccountdetail : detailArr
+        });
+        
+        this.sc.toElement("scrollRight", 750);
+    });
+    
     account.prototype.onStatisticsClicked = function(){
       ih.plugins.rootPlugin.showMaskSpinner();
       this.dm.loadAllAccountRecord({"uid":ih.plugins.rootViewController.dm.sysUser.id});
@@ -273,7 +349,35 @@
     };
     
     account.prototype.onAnalyseClicked = function(){
-      $("#ih-reportContainer").html("");
+      $("#ih-reportContainer").html(this.analyseHtml);
+      
+      this.sc = new ih.Scroll("scrollWrapper");
+      $("#scrollLeftButton").click(ih.$F(function(){
+        this.sc.toElement("scrollRight", 750);
+      }).bind(this));
+      
+      $("#scrollRightButton").click(ih.$F(function(){
+        this.sc.toElement("scrollLeft", 750);
+      }).bind(this));
+            
+      var me = this;
+      $("#ih-analyse-year-select").change(function(){
+        $("#accountYearModel").html('<li style="padding:0;" rel="data{yearaccount}"><a class="account-list" rel="data{yearaccount.text;yearaccount.link@href;yearaccount.id@id;yearaccount.type@type;yearaccount.year@year}" type="" href="javascript:void(0)"></a></li>');
+        me.onYearSelected();
+      });
+      
+      // Set option value
+      if(this.dm.analyseYears){
+        this.updateYearsOptions();
+      } else {
+        var paras = {
+                     "uid":ih.plugins.rootViewController.dm.sysUser.id
+                     };
+        ih.plugins.rootPlugin.showMaskSpinner();
+        this.dm.doLoadAnalyseYears(paras);
+      }
+      
+
     };
     
     account.prototype.onManagerClicked = function(){
@@ -371,6 +475,31 @@
                 
       this.accountListHtml = '<style>.account-list{color:#666}.account-list:hover{text-decoration: none;}</style><div style="padding:0 0 0 8px;"><li style="padding:0;" rel="data{menuitem}"><a class="account-list" rel="data{menuitem.text;menuitem.link@href;menuitem.id@id;menuitem.type@type}" type="" href="javascript:void(0)"></a></li></div>';
       
+      this.analyseHtml = '<style>'+
+                  '#scrollLeft{left:0px;}'+
+                  '#scrollRight{left:678px;}'+
+                  '#scrollContent{left:628px}'+
+                  '.scrollButton{position:absolute;font-size:40px;box-sizing: border-box;-webkit-box-align: center;text-align: center;cursor: default;color: rgba(0,0,0, 0.5);border: none;background:transparent;z-index:10;}'+
+                  '.scrollButton:hover{background-color:#999;color:#fff;}'+
+                '</style>'+
+                '<div id="scrollWrapper" style="width:678px;height:300px;position:relative;overflow:hidden">'+
+                  '<div id="scrollContent" style="position:absolute;width:100px;height:40px;">'+
+                    '<button id="scrollLeftButton" class="scrollButton" style="left:0px;"><</button>'+
+                    '<button id="scrollRightButton" class="scrollButton" style="left:60px;">></button>'+
+                  '</div>'+
+                  '<div id="scrollLeft" style="position:absolute;top:0px;width:678px;height:300px;">'+
+                  '<div style="padding:12px 10px 10px 10px;"><h4>分析统计</h4>' +
+                     '<font size="2"><label><span class="dslabel">年份:</span></label></font>' +
+                     '<select id="ih-analyse-year-select" style=""><option>2013</option></select>'+
+                  '</div>'+
+                  '<style>.account-list{color:#666}.account-list:hover{text-decoration: none;}</style><div style="padding:0 0 0 8px;" id="accountYearModel"><li style="padding:0;" rel="data{yearaccount}"><a class="account-list" rel="data{yearaccount.text;yearaccount.link@href;yearaccount.id@id;yearaccount.type@type;yearaccount.year@year}" type="" href="javascript:void(0)"></a></li></div>'+
+                  '</div>'+
+                  '<div id="scrollRight" style="position:absolute;top:0px;width:678px;height:300px;">'+
+                    '<div style="padding:52px 10px 10px 30px;"><h4>详细情况</h4>' +
+                      '<div style="padding:0 0 0 8px;" id="accountYearDetailModel"><li style="padding:0;" rel="data{yearaccountdetail}"><a class="account-list" rel="data{yearaccountdetail.text;yearaccountdetail.link@href;yearaccountdetail.id@id;yearaccountdetail.type@type}" type="" href="javascript:void(0)"></a></li></div>'+
+                    '</div>' +
+                  '</div>'+
+                '</div>';
     };
     
     account.prototype.showMessage = function(dialogMsg){

@@ -341,6 +341,7 @@
         1002 : this.languages[this.selectedLanguage]["errorcode_1002"],
         1003 : this.languages[this.selectedLanguage]["errorcode_1003"],
         1004 : this.languages[this.selectedLanguage]["errorcode_1004"],
+        1005 : this.languages[this.selectedLanguage]["errorcode_1005"],
         1080 : this.languages[this.selectedLanguage]["errorcode_1080"],
         1081 : this.languages[this.selectedLanguage]["errorcode_1081"],
         1082 : this.languages[this.selectedLanguage]["errorcode_1082"],
@@ -381,12 +382,15 @@
           "errorcode_1002":"添加记录失败，请重试",
           "errorcode_1003":"添加薪水失败，请重试",
           "errorcode_1004":"取所有记录失败，请重试",
+          "errorcode_1005":"您还没有任何记录，请添加记录",
           
           "errorcode_1080":"取任务失败，请重试",
           "errorcode_1081":"取所有任务失败，请重试",
           "errorcode_1082":"更新任务失败，请重试",
           "errorcode_1083":"删除任务失败，请重试",
-          "errorcode_1084":"新建任务失败，请重试"
+          "errorcode_1084":"新建任务失败，请重试",
+          
+          "errorcode_9001":"会话已超时，请重新登录"
         },
         "en" : {
           
