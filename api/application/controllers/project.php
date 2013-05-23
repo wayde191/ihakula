@@ -34,7 +34,7 @@ class Project extends CI_Controller {
 
       echo json_encode(array("status" => 1, "data" => $projectsArr));
     } else {
-      echo json_encode(array("status" => 0, "errorCode" => -1001));
+      echo json_encode(array("status" => 0, "errorCode" => 9001));
     }
 	}
     
