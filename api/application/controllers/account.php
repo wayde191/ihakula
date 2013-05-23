@@ -332,6 +332,7 @@ class Account extends CI_Controller {
     session_start();
     
 		$year = $_POST['year'];
+    $uid = $_POST['uid'];
     $fromYear = $year . "-00-00 00:00:00";
     $toYear = ((int)$year + 1) . "-00-00 00:00:00";
     
@@ -342,8 +343,8 @@ class Account extends CI_Controller {
     if ($_SESSION[$IH_SESSION_LOGGEDIN]) {
       $this->load->database();
         
-      $query = '(SELECT * FROM `ih_account_money` where `date`>"' . $fromYear . '" and `date`<"' . $toYear . '" order by id desc)';
-      
+      $query = '(SELECT * FROM `ih_account_money` where `user_id`="' . $uid . '" and `date`>"' . $fromYear . '" and `date`<"' . $toYear . '" order by id desc)';
+
       $query = $this->db->query($query);
       foreach ($query->result() as $row) {
         array_push($recordsArr, $row);

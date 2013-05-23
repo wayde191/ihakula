@@ -103,7 +103,7 @@
     
     account.prototype.onYearSelected = function(){
       var index = $("#ih-analyse-year-select").find("option:selected").attr("year_id");
-      var paras = {"year":index};
+      var paras = {"year":index, "uid":ih.plugins.rootViewController.dm.sysUser.id};
       if(this.dm.yearsRecords[index]){
         this.getYearRecordSuccess();
       } else {
@@ -494,7 +494,7 @@
                   '</div>'+
                   '<style>.account-list{color:#666}.account-list:hover{text-decoration: none;}</style><div style="padding:0 0 0 8px;" id="accountYearModel"><li style="padding:0;" rel="data{yearaccount}"><a class="account-list" rel="data{yearaccount.text;yearaccount.link@href;yearaccount.id@id;yearaccount.type@type;yearaccount.year@year}" type="" href="javascript:void(0)"></a></li></div>'+
                   '</div>'+
-                  '<div id="scrollRight" style="position:absolute;top:0px;width:678px;height:300px;">'+
+                  '<div id="scrollRight" style="position:absolute;top:0px;width:678px;height:300px;overflow:scroll;">'+
                     '<div style="padding:52px 10px 10px 30px;"><h4>详细情况</h4>' +
                       '<div style="padding:0 0 0 8px;" id="accountYearDetailModel"><li style="padding:0;" rel="data{yearaccountdetail}"><a class="account-list" rel="data{yearaccountdetail.text;yearaccountdetail.link@href;yearaccountdetail.id@id;yearaccountdetail.type@type}" type="" href="javascript:void(0)"></a></li></div>'+
                     '</div>' +
