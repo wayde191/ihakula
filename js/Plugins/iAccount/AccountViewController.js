@@ -320,18 +320,90 @@
         var type = jqEle.attr('type');
         var year = jqEle.attr('year');
         
+        var incomeFields = {};
+        var outcomeFields = {};
         var detailArr = [];
+        var incomeOutcomeArr = [];
+        var sArr = [];
+        
+        var earn = null;
+        var use = null;
+        
         if(type == "year"){
           var months = this.dm.yearsRecords[year]["month"];
+          
           for(var m in months){
-            detailArr = detailArr.concat(months[m]["income"]);
-            detailArr = detailArr.concat(months[m]["outcome"]);
+            var statistic = months[m]["statistic"];
+            
+            for(var field in statistic){
+              if(field.indexOf("收入") > -1){
+                if(null == incomeFields[field]){
+                  incomeFields[field] = parseFloat(statistic[field]);
+                } else {
+                  incomeFields[field] = parseFloat(incomeFields[field]) + parseFloat(statistic[field]);
+                }
+              } else {
+                if(null == outcomeFields[field]){
+                  outcomeFields[field] = parseFloat(statistic[field]);
+                } else {
+                  outcomeFields[field] = parseFloat(outcomeFields[field]) + parseFloat(statistic[field]);
+                }
+              }
+            }
+            
+            incomeOutcomeArr = incomeOutcomeArr.concat(months[m]["income"]);
+            incomeOutcomeArr = incomeOutcomeArr.concat(months[m]["outcome"]);
           }
+          
+          var yearIncome = this.dm.yearsRecords[year]["yearIncome"];
+          var yearOutcome = this.dm.yearsRecords[year]["yearOutcome"];
+          earn = yearIncome;
+          use = yearOutcome;
+          
+          for(var field in incomeFields){
+            incomeFields[field] = field + "," + incomeFields[field] + "@" + (incomeFields[field] / yearIncome * 100).toPrecision(4) + "%";
+          }
+          for(var field in outcomeFields){
+            outcomeFields[field] = field + "," + outcomeFields[field] + "@" + (outcomeFields[field] / yearOutcome * 100).toPrecision(4) + "%";
+          }
+          
         } else {
           var month = this.dm.yearsRecords[year]["month"][id];
-          detailArr = detailArr.concat(month["income"]);
-          detailArr = detailArr.concat(month["outcome"]);
+          
+          var statistic = month["statistic"];
+          var earn = month["earn"];
+          var use = month["use"];
+          
+          for(var field in statistic){
+            if(field.indexOf("收入") > -1){
+              incomeFields[field] = field + "," + statistic[field] + "@" + (statistic[field] / earn * 100).toPrecision(4) + "%";
+            } else {
+              outcomeFields[field] = field + "," + statistic[field] + "@" + (statistic[field] / use * 100).toPrecision(4) + "%";
+            }
+          }
+          
+          incomeOutcomeArr = incomeOutcomeArr.concat(month["income"]);
+          incomeOutcomeArr = incomeOutcomeArr.concat(month["outcome"]);
         }
+        
+        if(incomeFields){
+          var sText = "收入:" + earn;
+          for(var field in incomeFields){
+            sText += (" || " + incomeFields[field])
+          }
+          sArr.push({id:"-1000", type:"incomeStatistic", text:sText});
+        }
+        
+        if(outcomeFields){
+          var sText = "支出:" + use;
+          for(var field in outcomeFields){
+            sText += (" || " + outcomeFields[field])
+          }
+          sArr.push({id:"-1000", type:"outcomeStatistic", text:sText});
+        }
+        
+        detailArr = detailArr.concat(sArr);
+        detailArr = detailArr.concat(incomeOutcomeArr);
         
         $("#accountYearDetailModel").html('<li style="padding:0;" rel="data{yearaccountdetail}"><a class="account-list" rel="data{yearaccountdetail.text;yearaccountdetail.link@href;yearaccountdetail.id@id;yearaccountdetail.type@type}" type="" href="javascript:void(0)"></a></li>');
         

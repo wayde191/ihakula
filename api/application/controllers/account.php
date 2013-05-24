@@ -320,7 +320,7 @@ class Account extends CI_Controller {
         $text .= "(-) ";
       }
       $text .= $field->field . ":" . $detail->name . " " . $record->money . "(CNY)" . " " . $record->description . " " . $record->date;
-      $data = array("id" => $record->ID, "type" => $field->type, "text" => $text, "date" => $record->date, "money" => $record->money);
+      $data = array("id" => $record->ID, "type" => $field->type, "text" => $text, "date" => $record->date, "money" => $record->money, "fieldName" => $field->field);
       array_push($resultArr, $data);
     }
 
@@ -360,7 +360,7 @@ class Account extends CI_Controller {
         
         $monthArr = array();
         if(!isset($monthsArr[$month])){
-          $monthArr = array("income" => array(), "outcome" => array(), "earn"=>0.0, "use"=>0.0, "month"=>$month);
+          $monthArr = array("income" => array(), "outcome" => array(), "earn"=>0.0, "use"=>0.0, "month"=>$month, "statistic"=>array());
           $monthsArr[$month] = $monthArr;
         }
         $monthArr = $monthsArr[$month];
@@ -369,6 +369,14 @@ class Account extends CI_Controller {
         $earn = $monthArr["earn"];
         $income = $monthArr["income"];
         $outcome = $monthArr["outcome"];
+        $statistic = $monthArr["statistic"];
+        
+        $fieldName = $record["fieldName"];
+        if(isset($statistic[$fieldName])){
+          $statistic[$fieldName] = (float)$statistic[$fieldName] + (float)$record["money"];
+        } else {
+          $statistic[$fieldName] = (float)$record["money"];
+        }
         
         if("1" == $record["type"]){ // income
           $earn += (float)$record["money"];
@@ -383,6 +391,8 @@ class Account extends CI_Controller {
         $monthArr["earn"] = $earn;
         $monthArr["income"] = $income;
         $monthArr["outcome"] = $outcome;
+        $monthArr["statistic"] = $statistic;
+        
         $monthsArr[$month] = $monthArr;
       }
       
@@ -398,7 +408,7 @@ class Account extends CI_Controller {
         array_push($returnArr, $monthAccount);
       }
       
-      echo json_encode(array("status" => 1, "data" => array("year" => $returnArr, "month" => $monthsArr)));
+      echo json_encode(array("status" => 1, "data" => array("year" => $returnArr, "month" => $monthsArr, "yearIncome" => $yearIncome, "yearOutcome" => $yearOutcome)));
       
     } else {
       echo json_encode(array("status" => 0, "errorCode" => 9001));
