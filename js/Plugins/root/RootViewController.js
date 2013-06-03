@@ -40,8 +40,15 @@
       }).bind(this));
       
       $("#content-col-1-link").click(ih.$F(function(){
-        this.showMessage({title:"温馨提示", text:"Coming soon"});
+        var productsPlugin = ihSysEngine.root.findChildPluginById("ih.plugins.products");
+        if(!productsPlugin.scriptsLoaded) {
+          ih.plugins.rootPlugin.showMaskSpinner();
+          productsPlugin.loadScripts();
+        } else {
+          productsPlugin.pluginAnchor.scriptsLoaded();
+        }
       }).bind(this));
+      
       $("#content-col-2-link").click(ih.$F(function(){
         this.showMessage({title:"温馨提示", text:"Coming soon"});
       }).bind(this));

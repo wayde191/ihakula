@@ -453,7 +453,104 @@
     };
     
     account.prototype.onManagerClicked = function(){
-      $("#ih-reportContainer").html("");
+      $("#ih-reportContainer").html(this.managerHtml);
+      
+      var me = this;
+      $('#ih-coming-benifit').handsontable({
+          colWidths: [80, 80, 80, 80, 80, 80, 80],
+          currentRowClassName: 'currentRow',
+          currentColClassName: 'currentCol',
+          onChange: function (data) {
+            if(data) {
+              var selectedValue = data[0];
+              if(selectedValue) {
+                me.onTableValueChanged(selectedValue);
+              }
+            }
+          },
+          colHeaders: ["金额", "类型", "时长", "利率", "收益", "起始时间", "收益时间"],
+          columns: [
+              {
+                data: "金额",
+                readOnly: true
+              },
+              {
+                data: "类型",
+                readOnly: true
+              },
+              {
+                data: "时长",
+                readOnly: true
+              },
+              {
+                data: "利率",
+                readOnly: true
+              },
+              {
+                data: "收益",
+                readOnly: true
+              },
+              {
+                data: "起始时间",
+                readOnly: true
+              },
+              {
+                data: "收益时间",
+                readOnly: true
+              }
+            ],
+            rowHeaders: true,
+            RemoveRow: false,
+            minSpareRows: 1
+        });
+        
+        $('#ih-earn-benifit').handsontable({
+          colWidths: [80, 80, 80, 80, 80, 80, 80],
+          currentRowClassName: 'currentRow',
+          currentColClassName: 'currentCol',
+          onChange: function (data) {
+            if(data) {
+              var selectedValue = data[0];
+              if(selectedValue) {
+                me.onTableValueChanged(selectedValue);
+              }
+            }
+          },
+          colHeaders: ["金额", "类型", "时长", "利率", "收益", "起始时间", "收益时间"],
+          columns: [
+              {
+                data: "金额",
+                readOnly: true
+              },
+              {
+                data: "类型",
+                readOnly: true
+              },
+              {
+                data: "时长",
+                readOnly: true
+              },
+              {
+                data: "利率",
+                readOnly: true
+              },
+              {
+                data: "收益",
+                readOnly: true
+              },
+              {
+                data: "起始时间",
+                readOnly: true
+              },
+              {
+                data: "收益时间",
+                readOnly: true
+              }
+            ],
+            rowHeaders: true,
+            RemoveRow: false,
+            minSpareRows: 1
+        }); 
     };
     
     account.prototype.loadContent = function(){
@@ -572,6 +669,41 @@
                     '</div>' +
                   '</div>'+
                 '</div>';
+        
+        this.managerHtml = '<style>'+
+                  '.star{color:#D10002;padding-left:3px;}'+
+                  '.b5{line-height:5px;height:5px;}'+
+                  '#manager-frame td{border:none}'+
+                  '.handsontable .currentRow {' +
+                    'background-color: #E7E8EF;' +
+                  '}' +
+                  '.handsontable .currentCol {' +
+                    'background-color: #F9F9FB;' +
+                  '}' +
+                '</style>'+
+          '<div id="manager-frame" style="padding:4px;">'+
+          '<div style="font-size:15px;">'+
+            '<div><span style="font-weight:bold;">活期资产:</span><span id="ih-avaliable-wealth-label" style="color:#73A925;font-weight:bold;padding-left:20px;">789.6</span> (RMB)</div>'+
+            '<div><span style="font-weight:bold;">定期资产:</span><span id="ih-fix-wealth-label" style="color:#73A925;font-weight:bold; padding-left:20px;">789.6</span> (RMB)</div>'+
+            '<div><span style="font-weight:bold;">全部消费:</span><span id="ih-all-consume-label" style="color:#cc0066;font-weight:bold; padding-left:20px;">789.6</span> (RMB)</div>'+
+            '</div>'+
+          '<div style="padding:20px;"><h4 style="margin-bottom:8px;">投资</h4>'+
+          '<div style="background-color: #efefef; border-radius:4px;"><table style="margin:8px;"><tbody>'+
+            '<tr style="height:0px;"><td style="width:120px; padding-right:10px;"></td><td style="width:120px; padding-right:10px;"></td><td style="width:120px; padding-right:10px;"></td><td style="width:120px; padding-right:10px;"></td><td style="width:120px; padding-right:10px;"></td></tr>'+
+            '<tr style="height:0px;">'+
+              '<td><span><span>金额:</span></span><span class="star">*</span><div class="b5"></div><input></input></td>'+
+              '<td><span><span>类型:</span></span><span class="star">*</span><div class="b5"></div><input></input></td>'+
+              '<td><span><span>时长（年）:</span></span><span class="star">*</span><div class="b5"></div><input></input></td>'+
+              '<td><span><span>利率:</span></span><span class="star">*</span><div class="b5"></div><input></input></td>'+
+              '<td><div style="position: absolute;height: 40px;left:594px;top:134px;"><a id="ih-investment-button" class="button-fillet3" style="background: -moz-linear-gradient(19% 75% 90deg, rgba(30,30,30,.45), rgba(75,75,75,1));background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(30,30,30,.45)), to(rgba(75,75,75,1)));">确定</a></div></td>'+
+            '</tr>'+
+          '</tbody></table></div>'+
+          '</div>'+
+          '</div>'+
+          '<div style="padding:0 20px 20px 20px;">'+
+          '<h4 style="margin-bottom:8px;">待收益</h4><div id="ih-coming-benifit"></div>'+
+          '<h4 style="margin-bottom:8px; margin-top:8px;">已收益</h4><div id="ih-earn-benifit"></div></div>';
+          
     };
     
     account.prototype.showMessage = function(dialogMsg){

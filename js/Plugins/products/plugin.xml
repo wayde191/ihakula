@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <plugin>
-	<info id="ih.plugins.products" parentId="ih.plugins.root" lazyLoad="false"></info>
+	<info id="ih.plugins.products" parentId="ih.plugins.root" lazyLoad="true"></info>
   
   <resource>
     <script path='./js/Plugins/products/productsPlugin.js'></script>
+    <script path='./js/Plugins/products/productsViewController.js'></script>
+    <script path='./js/Plugins/products/productsDataModel.js'></script>
 	</resource>
 	
 	<extension-point>

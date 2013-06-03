@@ -4,9 +4,14 @@
   *@Time : 2010.3.4
   */
 
-  ih.defineClass('ih.plugins.productsPlugin', null, null, function(PRODUCTS, products){
+  ih.defineClass('ih.plugins.productsPlugin', null, null, function(PLUGIN, plugin){
   
-    products.prototype.init = function(){
+    plugin.prototype.init = function(){
     }
-
+    
+    plugin.prototype.scriptsLoaded = function(){
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      ih.plugins.products = new ih.plugins.productsViewController();
+    };
+    
   });
