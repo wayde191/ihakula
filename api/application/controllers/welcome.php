@@ -1,8 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-global $WP_ROOTPATH;
-require( $WP_ROOTPATH . 'wp-load.php' );
-
 class Welcome extends CI_Controller {
 
 	/**
@@ -24,6 +21,11 @@ class Welcome extends CI_Controller {
 	{
 		$this->load->view('welcome_message');
 	}
+  
+  public function php(){
+    $t=strtotime("+3 month"); 
+    echo date("Y-m-d H:i:s",$t);
+  }
 
 	public function test()
 	{

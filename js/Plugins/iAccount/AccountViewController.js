@@ -550,7 +550,104 @@
             rowHeaders: true,
             RemoveRow: false,
             minSpareRows: 1
-        }); 
+        });
+      
+      $("#ih-investment-button").click(ih.$F(function(){
+        this.onInvestmentBtnClicked();
+      }).bind(this));
+        
+      // Set option value
+      if(this.dm.wealth){
+        this.getWealthSuccess();
+      } else {
+        var paras = {
+                     "userId":ih.plugins.rootViewController.dm.sysUser.id
+                     };
+        ih.plugins.rootPlugin.showMaskSpinner();
+        this.dm.getWealth(paras);
+      }
+    };
+    
+    account.prototype.onInvestmentBtnClicked = function(){
+      
+      var money = $("#investment-money").val();
+      var type = $("#investment-type").val();
+      var time = $("#investment-time").val();
+      var rate = $("#investment-rate").val();
+      
+      if(!money || !type || !time || !rate){
+        this.showMessage({title:"温馨提示", text:"请将必填项完善"});
+        return;
+      }
+      
+      if(!(/^\d+\.{0,1}\d+$/.test(money))){
+        this.showMessage({title:"温馨提示", text:"请在金额栏输入数字"});
+        return;
+      }
+      if(!(/^\d+\.{0,1}\d+$/.test(rate))){
+        this.showMessage({title:"温馨提示", text:"请在利率栏输入数字"});
+        return;
+      }
+      
+      if(money > this.dm.wealth.avaliable_wealth){
+        this.showMessage({title:"温馨提示", text:"您可用于投资的资产值为:" + this.dm.wealth.avaliable_wealth});
+        return;
+      }
+      
+      var paras = {
+        "userId":ih.plugins.rootViewController.dm.sysUser.id,
+        "money": money,
+        "type": type,
+        "time": time,
+        "rate": rate
+      };
+      ih.plugins.rootPlugin.showMaskSpinner();
+      this.dm.investment(paras);
+      
+    };
+    
+    account.prototype.getWealthSuccess = function(){
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      $("#ih-avaliable-wealth-label").html(this.dm.wealth.avaliable_wealth);
+      $("#ih-fix-wealth-label").html(this.dm.wealth.fix_wealth);
+      $("#ih-all-consume-label").html(this.dm.wealth.consume);
+      
+      var income = this.dm.wealth.income;
+      var coming = this.dm.wealth.coming;
+      
+      var incomeArr = [];
+      var comingArr = [];
+      
+      for(var i = 0; i < income.length; i++) {
+        var item = income[i];
+        var task = {
+          "金额":item.money,
+          "类型":item.type,
+          "时长":item.period,
+          "利率":item.rate,
+          "收益":(item.money * item.period * item.rate).toPrecision(8),
+          "起始时间":item.start_date,
+          "收益时间":item.settle_date
+        };
+        incomeArr.push(task);
+      }
+      
+      for(var i = 0; i < coming.length; i++) {
+        var item = coming[i];
+        var task = {
+          "金额":item.money,
+          "类型":item.type,
+          "时长":item.period,
+          "利率":item.rate,
+          "收益":(item.money * item.period * item.rate).toPrecision(8),
+          "起始时间":item.start_date,
+          "收益时间":item.settle_date
+        };
+        comingArr.push(task);
+      }
+      
+      $('#ih-coming-benifit').handsontable('loadData', comingArr);
+      $('#ih-earn-benifit').handsontable('loadData', incomeArr);
     };
     
     account.prototype.loadContent = function(){
@@ -683,18 +780,18 @@
                 '</style>'+
           '<div id="manager-frame" style="padding:4px;">'+
           '<div style="font-size:15px;">'+
-            '<div><span style="font-weight:bold;">活期资产:</span><span id="ih-avaliable-wealth-label" style="color:#73A925;font-weight:bold;padding-left:20px;">789.6</span> (RMB)</div>'+
-            '<div><span style="font-weight:bold;">定期资产:</span><span id="ih-fix-wealth-label" style="color:#73A925;font-weight:bold; padding-left:20px;">789.6</span> (RMB)</div>'+
-            '<div><span style="font-weight:bold;">全部消费:</span><span id="ih-all-consume-label" style="color:#cc0066;font-weight:bold; padding-left:20px;">789.6</span> (RMB)</div>'+
+            '<div><span style="font-weight:bold;">活期资产:</span><span id="ih-avaliable-wealth-label" style="color:#73A925;font-weight:bold;padding-left:20px;">00.00</span> (RMB)</div>'+
+            '<div><span style="font-weight:bold;">定期资产:</span><span id="ih-fix-wealth-label" style="color:#73A925;font-weight:bold; padding-left:20px;">00.00</span> (RMB)</div>'+
+            '<div><span style="font-weight:bold;">全部消费:</span><span id="ih-all-consume-label" style="color:#cc0066;font-weight:bold; padding-left:20px;">00.00</span> (RMB)</div>'+
             '</div>'+
           '<div style="padding:20px;"><h4 style="margin-bottom:8px;">投资</h4>'+
           '<div style="background-color: #efefef; border-radius:4px;"><table style="margin:8px;"><tbody>'+
             '<tr style="height:0px;"><td style="width:120px; padding-right:10px;"></td><td style="width:120px; padding-right:10px;"></td><td style="width:120px; padding-right:10px;"></td><td style="width:120px; padding-right:10px;"></td><td style="width:120px; padding-right:10px;"></td></tr>'+
             '<tr style="height:0px;">'+
-              '<td><span><span>金额:</span></span><span class="star">*</span><div class="b5"></div><input></input></td>'+
-              '<td><span><span>类型:</span></span><span class="star">*</span><div class="b5"></div><input></input></td>'+
-              '<td><span><span>时长（年）:</span></span><span class="star">*</span><div class="b5"></div><input></input></td>'+
-              '<td><span><span>利率:</span></span><span class="star">*</span><div class="b5"></div><input></input></td>'+
+              '<td><span><span>金额:</span></span><span class="star">*</span><div class="b5"></div><input id="investment-money"></input></td>'+
+              '<td><span><span>类型:</span></span><span class="star">*</span><div class="b5"></div><input id="investment-type"></input></td>'+
+              '<td><span><span>时长（年）:</span></span><span class="star">*</span><div class="b5"></div><select id="investment-time" style="width:90px;"><option>0.25</option><option>0.5</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></td>'+
+              '<td><span><span>利率:</span></span><span class="star">*</span><div class="b5"></div><input id="investment-rate"></input></td>'+
               '<td><div style="position: absolute;height: 40px;left:594px;top:134px;"><a id="ih-investment-button" class="button-fillet3" style="background: -moz-linear-gradient(19% 75% 90deg, rgba(30,30,30,.45), rgba(75,75,75,1));background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(30,30,30,.45)), to(rgba(75,75,75,1)));">确定</a></div></td>'+
             '</tr>'+
           '</tbody></table></div>'+
@@ -739,6 +836,11 @@
     };
     
     account.prototype.loadAllAccountRecordFailed = function(errorCode) {
+      ih.plugins.rootPlugin.hideMaskSpinner();
+      this.showMessage({title:"温馨提示", text:ih.plugins.rootViewController.errorInfo[errorCode]});
+    };
+    
+    account.prototype.loadWealthFailed = function(errorCode){
       ih.plugins.rootPlugin.hideMaskSpinner();
       this.showMessage({title:"温馨提示", text:ih.plugins.rootViewController.errorInfo[errorCode]});
     };

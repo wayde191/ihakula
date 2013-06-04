@@ -52,6 +52,163 @@ class Account extends CI_Controller {
       echo json_encode(array("status" => 0, "errorCode" => 1001));
     }
   }
+  
+    public function investment(){
+      global $IH_SESSION_LOGGEDIN;
+      if(!isset($_SESSION)){
+        session_start();
+      }
+
+      $userId = $_POST['userId'];
+      $money = (float)$_POST['money'];
+      $type = $_POST['type'];
+      $time = (float)$_POST['time'];
+      $rate = (float)$_POST['rate'];
+      
+      date_default_timezone_set('Asia/Chongqing');
+      $date = date('Y-m-d');
+      
+      $settle =strtotime("+" . (12 * $time) . " month");
+      $settleDate = date("Y-m-d",$settle);
+      
+      
+      if ($_SESSION[$IH_SESSION_LOGGEDIN]) {
+        $this->load->database();
+        
+        $sql = 'SELECT * FROM ih_account_wealth WHERE user_id=' . $userId;
+        $userAccount = $this->db->query($sql);
+                  
+        if ($userAccount->num_rows() > 0) {
+          $row = $userAccount->row();
+          $avaliable_wealth = (float)$row->avaliable_wealth;
+          $fix_wealth = (float)$row->fix_wealth;
+          
+          $fix_wealth += $money;
+          $avaliable_wealth -= $money;
+          $sql = "UPDATE  `ih_account_wealth` SET  `fix_wealth` ='" . $fix_wealth . "', `avaliable_wealth` ='" . $avaliable_wealth . "' WHERE `user_id` =" . $userId;
+          $this->db->query($sql);
+          
+          $sql = "INSERT INTO  `ih_account_investment` (
+                    `user_id` ,
+                    `money` ,
+                    `type` ,
+                    `period` ,
+                    `rate`,
+                    `start_date`,
+                    `settle_date`
+                    )
+                    VALUES (
+                    '$userId',  '$money',  '$type',  '$time',  '$rate', '$date', '$settleDate'
+                    )";
+                    
+          $this->db->query($sql);
+        
+          $this->getWealth();
+          
+        } else {
+          echo json_encode(array("status" => 0));
+        }
+
+      } else {
+          echo json_encode(array("status" => 0, "errorCode" => 1002));
+      }
+
+    }
+  
+    public function getWealth(){
+      global $IH_SESSION_LOGGEDIN;
+      if(!isset($_SESSION)){
+        session_start();
+      }
+
+      $userId = $_POST['userId'];
+      
+      if ($_SESSION[$IH_SESSION_LOGGEDIN]) {
+        $this->load->database();
+        
+        $sql = 'SELECT * FROM ih_account_wealth WHERE user_id=' . $userId;
+        $userAccount = $this->db->query($sql);
+                  
+        if ($userAccount->num_rows() > 0) {
+          $row = $userAccount->row();
+          $avaliable_wealth = (float)$row->avaliable_wealth;
+          $funds = (float)$row->funds;
+          $consume = (float)$row->consume;
+          $fix_wealth = (float)$row->fix_wealth;
+          
+          date_default_timezone_set('Asia/Chongqing');
+          $today = date('Y-m-d');
+          $query = '(SELECT * FROM `ih_account_investment` where `user_id`="' . $userId . '" and `settle_date`>="' . $today . '" order by id asc)';
+          $query = $this->db->query($query);
+          $recordsArr = array();
+          foreach ($query->result() as $row) {
+            array_push($recordsArr, $row);
+          }
+          
+          $query = '(SELECT * FROM `ih_account_investment` where `user_id`="' . $userId . '" and `settle_date`<"' . $today . '" order by id desc)';
+          $query = $this->db->query($query);
+          $incomeRecordsArr = array();
+          foreach ($query->result() as $row) {
+            array_push($incomeRecordsArr, $row);
+          }
+        
+          echo json_encode(array("status" => 1, "data" => array("avaliable_wealth" => $avaliable_wealth, "funds" => $funds, "consume" => $consume, "fix_wealth" => $fix_wealth, "income" => $incomeRecordsArr, "coming" => $recordsArr)));
+          
+        } else {
+          echo json_encode(array("status" => 0));
+        }
+
+      } else {
+          echo json_encode(array("status" => 0, "errorCode" => 1002));
+      }
+    }
+  
+    public function updateWealth($userId, $fieldId, $detailId, $money) {
+      $this->load->database();
+        
+      $sql = 'SELECT * FROM ih_account_wealth WHERE user_id=' . $userId;
+      $userAccount = $this->db->query($sql);
+                
+      if ($userAccount->num_rows() > 0) {
+        $row = $userAccount->row();
+        $avaliable_wealth = (float)$row->avaliable_wealth;
+        $funds = (float)$row->funds;
+        $consume = (float)$row->consume;
+        
+        if($fieldId == 1 || $fieldId == 2){
+          if($fieldId == 1 && $detailId == 67){
+            $funds += $money;
+            $sql = "UPDATE  `ih_account_wealth` SET  `funds` ='" . $funds . "' WHERE `user_id` =" . $userId;
+            $this->db->query($sql);
+          } else {
+            $avaliable_wealth += $money;
+            $sql = "UPDATE  `ih_account_wealth` SET  `avaliable_wealth` ='" . $avaliable_wealth . "' WHERE `user_id` =" . $userId;
+            $this->db->query($sql);
+          }
+        } else {
+          $consume += $money;
+          $avaliable_wealth -= $money;
+          $sql = "UPDATE  `ih_account_wealth` SET  `consume` ='" . $consume . "', `avaliable_wealth` ='" . $avaliable_wealth . "' WHERE `user_id` =" . $userId;
+          $this->db->query($sql);
+        }
+      } else {
+        $sql = "INSERT INTO  `ih_account_wealth` (
+                    `user_id` ,
+                    `avaliable_wealth` ,
+                    `fix_wealth` ,
+                    `funds` ,
+                    `consume`
+                    )
+                    VALUES (
+                    '$userId',  '0',  '0',  '0',  '0'
+                    )";
+                    
+        $this->db->query($sql);
+        $this->updateWealth($userId, $fieldId, $detailId, $money);
+      }
+      
+      return TRUE;
+    }
     
     public function addRecord() {
       global $IH_SESSION_LOGGEDIN;
@@ -66,8 +223,10 @@ class Account extends CI_Controller {
       $date = date('Y-m-d H:i:s');
       
       if ($_SESSION[$IH_SESSION_LOGGEDIN]) {
+      
+          $this->updateWealth($userId, $fieldId, $detailId, $money);
+        
           $this->load->database();
-          
           $sql = "INSERT INTO  `ih_account_money` (
                     `user_id` ,
                     `field_id` ,
@@ -149,23 +308,11 @@ class Account extends CI_Controller {
                     )";
                     
             $this->db->query($sql);
+            $this->updateWealth($userId, 1, 1, $basicIncome);
             
             // salary_reserved_funds, 公积金
             $fundsIncome = $reservedFunds * 2;
-            $description = $companyName . ',' . $salaryDate . ',公积金收入';
-            $sql = "INSERT INTO  `ih_account_money` (
-                    `user_id` ,
-                    `field_id` ,
-                    `field_detail_id` ,
-                    `money` ,
-                    `description` ,
-                    `date`
-                    )
-                    VALUES (
-                    '$userId',  '1',  '1',  '$fundsIncome',  '$description',  '$date'
-                    )";
-                    
-            $this->db->query($sql);
+            $this->updateWealth($userId, 1, 67, $fundsIncome);
             
             // fee
             $description = $companyName . ',' . $salaryDate . ',税收支出';
@@ -183,6 +330,7 @@ class Account extends CI_Controller {
                       )";
                       
             $this->db->query($sql);
+            $this->updateWealth($userId, 12, 61, $money);
           
             echo json_encode(array("status" => 1));
           } else {

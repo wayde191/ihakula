@@ -17,6 +17,7 @@
       this.analyseYears = null;
       this.yearsRecords = {};
       this.allRecords = [];
+      this.wealth = null;
     };
     
     dm.prototype.doLoadFields = function(){
@@ -83,4 +84,28 @@
           }
         }).bind(this), ih.rootUrl + "account/loadAllAccountRecord", "POST");
     };
+    
+    dm.prototype.getWealth = function(paras){
+      this.request.callService(paras, ih.$F(function(response){
+          if (1 == response.status) {
+            this.wealth = response.data;
+            this.delegate.getWealthSuccess();
+          } else {
+            this.delegate.loadWealthFailed(response.errorCode);
+          }
+        }).bind(this), ih.rootUrl + "account/getWealth", "POST");
+    };
+    
+    dm.prototype.investment = function(paras){
+      this.request.callService(paras, ih.$F(function(response){
+          if (1 == response.status) {
+            this.wealth = response.data;
+            this.delegate.getWealthSuccess();
+          } else {
+            this.delegate.loadWealthFailed(response.errorCode);
+          }
+        }).bind(this), ih.rootUrl + "account/investment", "POST");
+    };
+    
+    
   });
