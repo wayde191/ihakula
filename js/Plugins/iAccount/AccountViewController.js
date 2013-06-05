@@ -609,7 +609,7 @@
     account.prototype.getWealthSuccess = function(){
       ih.plugins.rootPlugin.hideMaskSpinner();
       $("#ih-avaliable-wealth-label").html(this.dm.wealth.avaliable_wealth);
-      $("#ih-fix-wealth-label").html(this.dm.wealth.fix_wealth);
+      $("#ih-fix-wealth-label").html(this.dm.wealth.fix_wealth + this.dm.wealth.funds);
       $("#ih-all-consume-label").html(this.dm.wealth.consume);
       
       var income = this.dm.wealth.income;
@@ -632,6 +632,16 @@
         incomeArr.push(task);
       }
       
+      var task = {
+          "金额":this.dm.wealth.funds,
+          "类型":"公积金",
+          "时长":"∞",
+          "利率":"",
+          "收益":"",
+          "起始时间":"2013-01-04",
+          "收益时间":"2313-01-04"
+      };
+      comingArr.push(task);
       for(var i = 0; i < coming.length; i++) {
         var item = coming[i];
         var task = {
